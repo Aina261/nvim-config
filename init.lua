@@ -54,130 +54,71 @@ end
 -- ============================================================
 
 local function set_global_keymaps()
-  -- Shortcut: SPACE + w
-  -- Action: save the current file
+  -- Save the current file
   map('n', '<leader>w', '<cmd>w<CR>', 'Save file')
 
-  -- Shortcut: SPACE + q
-  -- Action: quit the current window
+  -- Quit the current window
   map('n', '<leader>q', '<cmd>q<CR>', 'Quit window')
 
-  -- Shortcut: Esc
-  -- Action: remove highlighting from the last search
+  -- Clear last search highlighting
   map('n', '<Esc>', '<cmd>nohlsearch<CR>', 'Clear search highlighting')
 
-  -- Shortcut: SPACE + d + a
-  -- Action: delete all content from the current file
+  -- Delete all content from the current file
   map('n', '<leader>da', '<cmd>%delete _<CR>', 'Delete all file content')
 
-  -- Shortcut: SPACE + e
-  -- Action: open the file explorer
+  -- Open the file explorer
   map('n', '<leader>e', '<cmd>NvimTreeFocus<CR>', 'Open file explorer')
 
-  -- Shortcut: SPACE + f + f
-  -- Action: search for a file in the project
+  -- Find a file in the project
   map('n', '<leader>ff', function()
     require('telescope.builtin').find_files()
   end, 'Find file')
 
-  -- Shortcut: SPACE + f + r
-  -- Action: search for text in the current file
+  -- Find text in the current buffer
   map('n', '<leader>fr', find_in_current_buffer, 'Find text in current file')
 
-  -- Shortcut: SPACE + f + g
-  -- Action: search for text in all project files
+  -- Search text in the project
   map('n', '<leader>fg', function()
     require('telescope.builtin').live_grep()
   end, 'Search text in project')
 
-  -- Shortcut: SPACE + f + b
-  -- Action: display the list of already-open files
+  -- Show open buffers
   map('n', '<leader>fb', function()
     require('telescope.builtin').buffers()
   end, 'Show open buffers')
 
-  -- Shortcut: Ctrl + h
-  -- Action: go to the left window
+  -- Navigate between windows
   map('n', '<C-h>', '<C-w>h', 'Go to left window')
-
-  -- Shortcut: Ctrl + j
-  -- Action: go to the bottom window
   map('n', '<C-j>', '<C-w>j', 'Go to bottom window')
-
-  -- Shortcut: Ctrl + k
-  -- Action: go to the top window
   map('n', '<C-k>', '<C-w>k', 'Go to top window')
-
-  -- Shortcut: Ctrl + l
-  -- Action: go to the right window
   map('n', '<C-l>', '<C-w>l', 'Go to right window')
 
-  -- Shortcut: [ + d
-  -- Action: go to the previous diagnostic
+  -- Diagnostics
   map('n', '[d', vim.diagnostic.goto_prev, 'Go to previous diagnostic')
-
-  -- Shortcut: ] + d
-  -- Action: go to the next diagnostic
   map('n', ']d', vim.diagnostic.goto_next, 'Go to next diagnostic')
-
-  -- Shortcut: SPACE + d
-  -- Action: display error details under the cursor
   map('n', '<leader>d', vim.diagnostic.open_float, 'Show diagnostic under cursor')
-
-  -- Shortcut: SPACE + Shift + d
-  -- Action: display the file diagnostics list
   map('n', '<leader>D', vim.diagnostic.setloclist, 'Show diagnostics list')
 
-  -- Shortcut: SPACE + l + i
-  -- Action: display LSP information
+  -- LSP and Mason
   map('n', '<leader>li', '<cmd>LspInfo<CR>', 'Show LSP information')
-
-  -- Shortcut: SPACE + l + r
-  -- Action: restart the LSP
   map('n', '<leader>lr', '<cmd>LspRestart<CR>', 'Restart LSP')
-
-  -- Shortcut: SPACE + m
-  -- Action: open Mason
   map('n', '<leader>m', '<cmd>Mason<CR>', 'Open Mason')
 end
 
 local function set_lsp_keymaps(bufnr)
-  -- Shortcut: g + d
-  -- Action: go to the definition of the item under the cursor
   map('n', 'gd', vim.lsp.buf.definition, 'Go to definition', { buffer = bufnr })
-
-  -- Shortcut: g + Shift + d
-  -- Action: go to the declaration of the item under the cursor
   map('n', 'gD', vim.lsp.buf.declaration, 'Go to declaration', { buffer = bufnr })
-
-  -- Shortcut: g + i
-  -- Action: go to the implementation of the item under the cursor
   map('n', 'gi', vim.lsp.buf.implementation, 'Go to implementation', { buffer = bufnr })
-
-  -- Shortcut: g + r
-  -- Action: show where the item is used
   map('n', 'gr', vim.lsp.buf.references, 'Show references', { buffer = bufnr })
-
-  -- Shortcut: Shift + k
-  -- Action: display documentation for the item under the cursor
   map('n', 'K', vim.lsp.buf.hover, 'Show documentation', { buffer = bufnr })
-
-  -- Shortcut: SPACE + r + n
-  -- Action: rename the item throughout the project
   map('n', '<leader>rn', vim.lsp.buf.rename, 'Rename symbol', { buffer = bufnr })
-
-  -- Shortcut: SPACE + c + a
-  -- Action: display available automatic actions
   map('n', '<leader>ca', vim.lsp.buf.code_action, 'Show code actions', { buffer = bufnr })
 
-  -- Shortcut: SPACE + f
-  -- Action: format the current file
   map('n', '<leader>f', function()
     vim.lsp.buf.format({ async = true })
   end, 'Format file', { buffer = bufnr })
 end
 
--- Enable global keybindings
 set_global_keymaps()
 
 -- ============================================================
@@ -185,6 +126,7 @@ set_global_keymaps()
 -- ============================================================
 
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
+
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local out = vim.fn.system({
     'git',
@@ -280,6 +222,54 @@ require('lazy').setup({
     end,
   },
 
+  -- Fast autocompletion: LSP, snippets, paths, and buffers
+  {
+    'saghen/blink.cmp',
+    version = '1.*',
+    dependencies = {
+      'rafamadriz/friendly-snippets',
+    },
+    opts = {
+      keymap = {
+        preset = 'super-tab',
+
+        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        ['<C-e>'] = { 'hide', 'fallback' },
+        ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
+        ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
+      },
+
+      appearance = {
+        nerd_font_variant = 'mono',
+      },
+
+      completion = {
+        accept = {
+          auto_brackets = {
+            enabled = true,
+          },
+        },
+
+        documentation = {
+          auto_show = true,
+          auto_show_delay_ms = 300,
+        },
+
+        menu = {
+          auto_show = true,
+        },
+      },
+
+      sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
+      },
+
+      fuzzy = {
+        implementation = 'prefer_rust_with_warning',
+      },
+    },
+  },
+
   -- LSP + Mason
   {
     'neovim/nvim-lspconfig',
@@ -287,6 +277,7 @@ require('lazy').setup({
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
+      'saghen/blink.cmp',
     },
     config = function()
       require('mason').setup({
@@ -304,7 +295,8 @@ require('lazy').setup({
         automatic_installation = true,
       })
 
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      -- Blink capabilities are passed to every LSP server.
+      local capabilities = require('blink.cmp').get_lsp_capabilities()
 
       local on_attach = function(_, bufnr)
         set_lsp_keymaps(bufnr)
@@ -395,6 +387,7 @@ require('lazy').setup({
             {
               function()
                 local clients = vim.lsp.get_clients({ bufnr = 0 })
+
                 if #clients == 0 then
                   return 'No LSP'
                 end
@@ -434,7 +427,7 @@ require('lazy').setup({
     end,
   },
 
-  -- Git signs in the gutter
+  -- Git changes in the gutter
   {
     'lewis6991/gitsigns.nvim',
     config = function()
