@@ -59,12 +59,112 @@ filetypes and root markers come from nvim-lspconfig.
 
 ## Requirements
 
-- Neovim 0.11+ and `git`
-- A [Nerd Font](https://www.nerdfonts.com/) for icons
-- [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md)
-  (`brew install tree-sitter-cli`): the `main` branch of nvim-treesitter compiles parsers locally.
-  Without it, parser installation fails and highlighting is disabled.
-- `node` and `npm` (Mason servers `ts_ls`, `pyright` and `bashls`), `ripgrep` (Telescope live grep)
+| Tool | Why it is needed |
+| --- | --- |
+| Neovim 0.11+ | Native LSP configuration API (`vim.lsp.config`) |
+| `git` | Clones lazy.nvim and every plugin |
+| C compiler (`cc` / `gcc` / `clang`) | nvim-treesitter compiles each parser locally |
+| [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md) | Required by the `main` branch of nvim-treesitter to build parsers. Without it every parser install fails (`error during tree-sitter build`) and highlighting is disabled |
+| `tar` and `curl` | nvim-treesitter downloads and unpacks parser sources |
+| `node` and `npm` | Mason installs `ts_ls`, `pyright` and `bashls` with npm |
+| `unzip`, `gzip`, `wget` or `curl` | Mason downloads and unpacks servers (`lua_ls` is a binary release) |
+| `ripgrep` (`rg`) | Telescope live grep (`<leader>fg`) |
+| `fd` (optional) | Faster file finding in Telescope |
+| A [Nerd Font](https://www.nerdfonts.com/) | Icons in the explorer, status line and Mason |
+| Clipboard tool (Linux only) | `clipboard=unnamedplus` needs `xclip`, `xsel` or `wl-clipboard` |
+
+Then set your terminal font to the installed Nerd Font (e.g. `JetBrainsMono Nerd Font`).
+
+## Installation
+
+Install the requirements for your system, put this configuration at the path below, then start
+`nvim` once. lazy.nvim installs the plugins, nvim-treesitter builds its parsers and Mason installs
+the language servers (wait until the messages stop, then restart Neovim).
+
+| System | Configuration path |
+| --- | --- |
+| macOS / Linux | `~/.config/nvim` |
+| Windows | `%LOCALAPPDATA%\nvim` |
+
+### macOS (Homebrew)
+
+```sh
+xcode-select --install   # C compiler, git, tar, curl (skip if already installed)
+brew install neovim tree-sitter-cli node ripgrep fd unzip
+brew install --cask font-jetbrains-mono-nerd-font
+```
+
+### Linux
+
+Install the Neovim 0.11+ and `tree-sitter-cli` versions from a source that is recent enough:
+many distribution repositories ship older ones. Check with `nvim --version`.
+
+Debian / Ubuntu:
+
+```sh
+sudo apt update
+sudo apt install -y git build-essential curl wget unzip tar gzip ripgrep fd-find nodejs npm xclip
+sudo ln -sf "$(command -v fdfind)" /usr/local/bin/fd   # Debian names the binary fdfind
+```
+
+Fedora:
+
+```sh
+sudo dnf install -y git gcc make curl wget unzip tar gzip ripgrep fd-find nodejs npm wl-clipboard
+```
+
+Arch:
+
+```sh
+sudo pacman -S --needed git base-devel curl wget unzip tar gzip ripgrep fd nodejs npm neovim tree-sitter-cli wl-clipboard
+```
+
+Neovim and the `tree-sitter` CLI on Debian / Ubuntu / Fedora (when the packaged versions are too old):
+
+```sh
+# Neovim: download the release archive matching your CPU from
+# https://github.com/neovim/neovim/releases (or use Homebrew on Linux / snap / flatpak).
+# tree-sitter CLI:
+sudo npm install -g tree-sitter-cli
+# or: cargo install --locked tree-sitter-cli
+```
+
+Nerd Font: download one from <https://www.nerdfonts.com/font-downloads>, unzip it into
+`~/.local/share/fonts`, then run `fc-cache -fv`.
+
+### Windows
+
+Run in PowerShell (Windows 10 / 11 already ship `tar` and `curl`):
+
+```powershell
+winget install Neovim.Neovim Git.Git OpenJS.NodeJS.LTS BurntSushi.ripgrep.MSVC sharkdp.fd 7zip.7zip
+winget install tree-sitter.tree-sitter-cli   # or: npm install -g tree-sitter-cli
+winget install zig.zig                       # C compiler for treesitter parsers
+```
+
+A C compiler is mandatory. Pick one:
+
+- `zig` (installed above): the simplest option, nvim-treesitter detects it.
+- Visual Studio Build Tools with the "Desktop development with C++" workload
+  (`winget install Microsoft.VisualStudio.2022.BuildTools`), then start Neovim from the
+  "Developer PowerShell for VS".
+- MinGW-w64 (`scoop install mingw` or MSYS2) with `gcc` available in `PATH`.
+
+Install a Nerd Font (`scoop bucket add nerd-fonts` then `scoop install JetBrainsMono-NF`, or download
+it from the Nerd Fonts site) and select it in Windows Terminal. Then open a new terminal so that
+`PATH` is refreshed. Using WSL instead? Follow the Linux instructions inside the WSL distribution.
+
+### Verify the installation
+
+```sh
+nvim --version                      # 0.11 or newer
+tree-sitter --version
+nvim --headless "+checkhealth nvim-treesitter" +qa
+```
+
+Inside Neovim run `:checkhealth nvim-treesitter lazy mason telescope vim.lsp`: nothing should be
+reported as `ERROR` for the tools listed above. Warnings about the Node, Python, Perl and Ruby
+providers and about `luarocks` are harmless for this configuration.
 
 ## Keymaps
 
