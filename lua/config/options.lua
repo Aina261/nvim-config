@@ -1,0 +1,20 @@
+local option = vim.opt
+
+option.number = true
+option.relativenumber = true
+option.mouse = 'a'
+option.ignorecase = true
+option.smartcase = true
+option.hlsearch = false
+option.wrap = false
+option.breakindent = true
+option.tabstop = 4
+option.shiftwidth = 4
+option.expandtab = true
+option.clipboard = 'unnamedplus'
+option.termguicolors = true
+option.signcolumn = 'yes'
+option.updatetime = 250
+option.scrolloff = 10
+option.splitright = true
+option.splitbelow = true
