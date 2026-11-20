@@ -20,6 +20,7 @@ lua/plugins/
   editor.lua               Telescope, Treesitter, comments, autopairs, git signs
   completion.lua           blink.cmp
   lsp.lua                  lazydev, Mason, nvim-lspconfig
+  mason_tools.lua          Full list of Mason packages installed automatically
 ```
 
 Every file in `lua/plugins/` is imported automatically by lazy.nvim.
@@ -39,6 +40,7 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 | gitsigns.nvim | Git changes in the gutter |
 | blink.cmp + friendly-snippets | Completion (LSP, paths, snippets, buffer) |
 | mason.nvim + mason-lspconfig.nvim | Install and enable language servers |
+| mason-tool-installer.nvim | Installs every Mason package listed in `lua/plugins/mason_tools.lua` |
 | nvim-lspconfig | Default configuration of each language server |
 | lazydev.nvim | Lua language server awareness of the Neovim API |
 
@@ -57,6 +59,26 @@ To add a server, append its name to `LANGUAGE_SERVERS_TO_INSTALL` in `lua/plugin
 Only override settings with `vim.lsp.config('<server>', { settings = ... })`: the command,
 filetypes and root markers come from nvim-lspconfig.
 
+## Mason packages
+
+All Mason packages (servers, formatters, linters, debug adapters) are listed in
+`MASON_PACKAGES_TO_INSTALL` in `lua/plugins/mason_tools.lua` and installed automatically at
+startup by mason-tool-installer, so a new machine gets the same tools. To add one, append its
+Mason name to that list (find names with `:Mason`).
+
+Some packages are built with a toolchain that Mason does not provide. If one is needed, install the
+toolchain and run `:MasonToolsInstall`:
+
+| Package needs | Install |
+| --- | --- |
+| `cargo` (Rust packages) | `rustup` or `brew install rust` |
+| `luarocks` (Lua packages) | `brew install luarocks` / your package manager |
+| JDK and `maven` (Java packages) | `brew install openjdk maven` |
+| Python 3.9 to 3.13 (some Python packages) | Mason refuses Python 3.14 and newer |
+
+Packages currently left out for that reason: `gitlab-ci-ls`, `prettypst`, `luacheck`,
+`luaformatter`, `java-language-server`, `nginx-language-server`.
+
 ## Requirements
 
 | Tool | Why it is needed |
@@ -66,7 +88,8 @@ filetypes and root markers come from nvim-lspconfig.
 | C compiler (`cc` / `gcc` / `clang`) | nvim-treesitter compiles each parser locally |
 | [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md) | Required by the `main` branch of nvim-treesitter to build parsers. Without it every parser install fails (`error during tree-sitter build`) and highlighting is disabled |
 | `tar` and `curl` | nvim-treesitter downloads and unpacks parser sources |
-| `node` and `npm` | Mason installs `ts_ls`, `pyright` and `bashls` with npm |
+| `node` and `npm` | Mason installs many packages with npm (`ts_ls`, `bashls`, `prettier`, `eslint_d`...) |
+| `python3` 3.9 to 3.13 (with `venv`) | Mason installs Python packages (`black`, `sqlfluff`, `python-lsp-server`...) in virtual environments |
 | `unzip`, `gzip`, `wget` or `curl` | Mason downloads and unpacks servers (`lua_ls` is a binary release) |
 | `ripgrep` (`rg`) | Telescope live grep (`<leader>fg`) |
 | `fd` (optional) | Faster file finding in Telescope |
@@ -78,8 +101,9 @@ Then set your terminal font to the installed Nerd Font (e.g. `JetBrainsMono Nerd
 ## Installation
 
 Install the requirements for your system, put this configuration at the path below, then start
-`nvim` once. lazy.nvim installs the plugins, nvim-treesitter builds its parsers and Mason installs
-the language servers (wait until the messages stop, then restart Neovim).
+`nvim` once. lazy.nvim installs the plugins, nvim-treesitter builds its parsers and
+mason-tool-installer installs all Mason packages (about 57, it takes a few minutes: wait until
+the messages stop, then restart Neovim).
 
 | System | Configuration path |
 | --- | --- |
@@ -90,7 +114,7 @@ the language servers (wait until the messages stop, then restart Neovim).
 
 ```sh
 xcode-select --install   # C compiler, git, tar, curl (skip if already installed)
-brew install neovim tree-sitter-cli node ripgrep fd unzip
+brew install neovim tree-sitter-cli node python@3.13 ripgrep fd unzip
 brew install --cask font-jetbrains-mono-nerd-font
 ```
 
@@ -103,20 +127,20 @@ Debian / Ubuntu:
 
 ```sh
 sudo apt update
-sudo apt install -y git build-essential curl wget unzip tar gzip ripgrep fd-find nodejs npm xclip
+sudo apt install -y git build-essential python3 python3-venv curl wget unzip tar gzip ripgrep fd-find nodejs npm xclip
 sudo ln -sf "$(command -v fdfind)" /usr/local/bin/fd   # Debian names the binary fdfind
 ```
 
 Fedora:
 
 ```sh
-sudo dnf install -y git gcc make curl wget unzip tar gzip ripgrep fd-find nodejs npm wl-clipboard
+sudo dnf install -y git gcc make python3 curl wget unzip tar gzip ripgrep fd-find nodejs npm wl-clipboard
 ```
 
 Arch:
 
 ```sh
-sudo pacman -S --needed git base-devel curl wget unzip tar gzip ripgrep fd nodejs npm neovim tree-sitter-cli wl-clipboard
+sudo pacman -S --needed git base-devel python curl wget unzip tar gzip ripgrep fd nodejs npm neovim tree-sitter-cli wl-clipboard
 ```
 
 Neovim and the `tree-sitter` CLI on Debian / Ubuntu / Fedora (when the packaged versions are too old):
@@ -137,7 +161,7 @@ Nerd Font: download one from <https://www.nerdfonts.com/font-downloads>, unzip i
 Run in PowerShell (Windows 10 / 11 already ship `tar` and `curl`):
 
 ```powershell
-winget install Neovim.Neovim Git.Git OpenJS.NodeJS.LTS BurntSushi.ripgrep.MSVC sharkdp.fd 7zip.7zip
+winget install Neovim.Neovim Git.Git OpenJS.NodeJS.LTS Python.Python.3.13 BurntSushi.ripgrep.MSVC sharkdp.fd 7zip.7zip
 winget install tree-sitter.tree-sitter-cli   # or: npm install -g tree-sitter-cli
 winget install zig.zig                       # C compiler for treesitter parsers
 ```
