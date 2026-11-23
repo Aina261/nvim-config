@@ -75,4 +75,12 @@ return {
       require('gitsigns').setup()
     end,
   },
+
+  -- Renders PDF pages with MuPDF's `mutool` and draws them as iTerm2 inline
+  -- images. It must load at startup to take over `*.pdf` buffers.
+  {
+    'rohit746/pdf-view.nvim',
+    lazy = false,
+    opts = {},
+  },
 }
