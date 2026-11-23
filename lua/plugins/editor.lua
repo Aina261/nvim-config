@@ -83,4 +83,15 @@ return {
     lazy = false,
     opts = {},
   },
+
+  -- The upstream GitHub repository is spelled `sqliteviwer.nvim` (the
+  -- `sqlite-viewer.nvim` name from its README does not exist), so `main` points
+  -- lazy.nvim to the real Lua module. It must load at startup to take over
+  -- `*.db` buffers. Requires the `sqlite3` binary.
+  {
+    'timwmillard/sqliteviwer.nvim',
+    main = 'sqlite-viewer',
+    lazy = false,
+    opts = {},
+  },
 }

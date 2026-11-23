@@ -17,7 +17,7 @@ lua/config/
   lazy.lua                 lazy.nvim bootstrap
 lua/plugins/
   ui.lua                   Theme, file explorer, status line, which-key
-  editor.lua               Telescope, Treesitter, comments, autopairs, git signs, PDF viewer
+  editor.lua               Telescope, Treesitter, comments, autopairs, git signs, PDF viewer, SQLite viewer
   completion.lua           blink.cmp
   lsp.lua                  lazydev, Mason, nvim-lspconfig
   mason_tools.lua          Full list of Mason packages installed automatically
@@ -39,6 +39,7 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 | nvim-autopairs | Close brackets and quotes automatically |
 | gitsigns.nvim | Git changes in the gutter |
 | pdf-view.nvim | View PDF files inside Neovim (iTerm2 inline images) |
+| sqlite-viewer.nvim | Browse SQLite database files as tables (needs `sqlite3`) |
 | blink.cmp + friendly-snippets | Completion (LSP, paths, snippets, buffer) |
 | mason.nvim + mason-lspconfig.nvim | Install and enable language servers |
 | mason-tool-installer.nvim | Installs every Mason package listed in `lua/plugins/mason_tools.lua` |
