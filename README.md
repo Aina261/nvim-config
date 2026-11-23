@@ -17,7 +17,7 @@ lua/config/
   lazy.lua                 lazy.nvim bootstrap
 lua/plugins/
   ui.lua                   Theme, file explorer, status line, which-key
-  editor.lua               Telescope, Treesitter, comments, autopairs, git signs, PDF viewer, SQLite viewer
+  editor.lua               Telescope, Treesitter, comments, autopairs, git signs, PDF viewer, SQLite viewer, Markdown renderer
   completion.lua           blink.cmp
   lsp.lua                  lazydev, Mason, nvim-lspconfig
   mason_tools.lua          Full list of Mason packages installed automatically
@@ -40,6 +40,7 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 | gitsigns.nvim | Git changes in the gutter |
 | pdf-view.nvim | View PDF files inside Neovim (iTerm2 inline images) |
 | sqlite-viewer.nvim | Browse SQLite database files as tables (needs `sqlite3`) |
+| render-markdown.nvim | Render Markdown in the buffer, toggled with `<leader>mp` in `.md` files |
 | blink.cmp + friendly-snippets | Completion (LSP, paths, snippets, buffer) |
 | mason.nvim + mason-lspconfig.nvim | Install and enable language servers |
 | mason-tool-installer.nvim | Installs every Mason package listed in `lua/plugins/mason_tools.lua` |
@@ -292,6 +293,14 @@ Press `g?` inside the explorer for the full list. The most useful keys:
 | `R` | Refresh |
 | `H` | Toggle hidden files |
 | `q` | Close the explorer |
+
+### Markdown rendering (render-markdown.nvim)
+
+Active by default in `.md` files. The keymap only exists in Markdown buffers.
+
+| Key | Action |
+| --- | --- |
+| `<leader>mp` | Toggle the rendering for the current buffer |
 
 ### PDF viewer (pdf-view.nvim)
 

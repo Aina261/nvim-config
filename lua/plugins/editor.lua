@@ -94,4 +94,16 @@ return {
     lazy = false,
     opts = {},
   },
+
+  -- Renders Markdown inside the buffer (headings, lists, code blocks, tables).
+  -- `<leader>mp` toggles the rendering in `.md` buffers (see `keys` below).
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    ft = 'markdown',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    opts = {},
+    keys = {
+      { '<leader>mp', '<cmd>RenderMarkdown buf_toggle<CR>', ft = 'markdown', desc = 'Toggle Markdown rendering' },
+    },
+  },
 }
