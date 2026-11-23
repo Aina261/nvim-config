@@ -25,6 +25,7 @@ return {
     'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
+      filters = { git_ignored = false },
       actions = {
         open_file = {
           window_picker = { enable = false },
