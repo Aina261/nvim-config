@@ -17,7 +17,7 @@ lua/config/
   lazy.lua                 lazy.nvim bootstrap
 lua/plugins/
   ui.lua                   Theme, file explorer, status line, which-key
-  editor.lua               Telescope, Treesitter, comments, autopairs, git signs
+  editor.lua               Telescope, Treesitter, comments, autopairs, git signs, PDF viewer
   completion.lua           blink.cmp
   lsp.lua                  lazydev, Mason, nvim-lspconfig
   mason_tools.lua          Full list of Mason packages installed automatically
@@ -38,6 +38,7 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 | Comment.nvim | Toggle comments |
 | nvim-autopairs | Close brackets and quotes automatically |
 | gitsigns.nvim | Git changes in the gutter |
+| pdf-view.nvim | View PDF files inside Neovim (iTerm2 inline images) |
 | blink.cmp + friendly-snippets | Completion (LSP, paths, snippets, buffer) |
 | mason.nvim + mason-lspconfig.nvim | Install and enable language servers |
 | mason-tool-installer.nvim | Installs every Mason package listed in `lua/plugins/mason_tools.lua` |
@@ -93,6 +94,7 @@ Packages currently left out for that reason: `gitlab-ci-ls`, `prettypst`, `luach
 | `unzip`, `gzip`, `wget` or `curl` | Mason downloads and unpacks servers (`lua_ls` is a binary release) |
 | `ripgrep` (`rg`) | Telescope live grep (`<leader>fg`) |
 | `fd` (optional) | Faster file finding in Telescope |
+| `mutool` (MuPDF) | pdf-view.nvim renders PDF pages with it |
 | A [Nerd Font](https://www.nerdfonts.com/) | Icons in the explorer, status line and Mason |
 | Clipboard tool (Linux only) | `clipboard=unnamedplus` needs `xclip`, `xsel` or `wl-clipboard` |
 
@@ -114,7 +116,7 @@ the messages stop, then restart Neovim).
 
 ```sh
 xcode-select --install   # C compiler, git, tar, curl (skip if already installed)
-brew install neovim tree-sitter-cli node python@3.13 ripgrep fd unzip
+brew install neovim tree-sitter-cli node python@3.13 ripgrep fd unzip mupdf
 brew install --cask font-jetbrains-mono-nerd-font
 ```
 
@@ -289,6 +291,20 @@ Press `g?` inside the explorer for the full list. The most useful keys:
 | `R` | Refresh |
 | `H` | Toggle hidden files |
 | `q` | Close the explorer |
+
+### PDF viewer (pdf-view.nvim)
+
+Opening a `.pdf` (`:e file.pdf`, `nvim file.pdf`, nvim-tree) shows it as a page image. Press `g?` in the viewer for the full list.
+
+| Key | Action |
+| --- | --- |
+| `j` / `k` | Scroll, turning the page at the edge |
+| `<PageDown>` / `<PageUp>` | Next / previous page |
+| `+` / `-` / `0` | Zoom in / out / fit page |
+| `/` | Search |
+| `gO` | Document outline |
+| `i` | Toggle dark mode |
+| `q` | Close the viewer |
 
 ### Discovering more
 
