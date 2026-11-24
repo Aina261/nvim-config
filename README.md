@@ -15,12 +15,14 @@ lua/config/
   keymaps.lua              Global keymaps
   lsp_keymaps.lua          Keymaps set when a language server attaches to a buffer
   lazy.lua                 lazy.nvim bootstrap
+lua/office_viewer.lua     Local .xlsx/.xlsm/.docx viewer (loaded by lua/plugins/office_viewer.lua)
 lua/plugins/
   ui.lua                   Theme, file explorer, status line, which-key
   editor.lua               Telescope, Treesitter, comments, autopairs, git signs, PDF viewer, SQLite viewer, Markdown renderer
   completion.lua           blink.cmp
   lsp.lua                  lazydev, Mason, nvim-lspconfig
   mason_tools.lua          Full list of Mason packages installed automatically
+  office_viewer.lua        Registers the local Office viewer
 ```
 
 Every file in `lua/plugins/` is imported automatically by lazy.nvim.
@@ -40,6 +42,7 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 | gitsigns.nvim | Git changes in the gutter |
 | pdf-view.nvim | View PDF files inside Neovim (iTerm2 inline images) |
 | sqlite-viewer.nvim | Browse SQLite database files as tables (needs `sqlite3`) |
+| office-viewer (local, `lua/office_viewer.lua`) | View `.xlsx`, `.xlsm` and `.docx` files as read-only Markdown (needs `unzip`) |
 | render-markdown.nvim | Render Markdown in the buffer, toggled with `<leader>mp` in `.md` files |
 | blink.cmp + friendly-snippets | Completion (LSP, paths, snippets, buffer) |
 | mason.nvim + mason-lspconfig.nvim | Install and enable language servers |
@@ -315,6 +318,13 @@ Opening a `.pdf` (`:e file.pdf`, `nvim file.pdf`, nvim-tree) shows it as a page 
 | `gO` | Document outline |
 | `i` | Toggle dark mode |
 | `q` | Close the viewer |
+
+### Office viewer (`.xlsx`, `.xlsm`, `.docx`)
+
+Opening one of these files shows a read-only Markdown rendering (so `render-markdown.nvim` applies, toggle with `<leader>mp`). `q` closes it.
+
+- Spreadsheets: one table per sheet, with column letters and row numbers. Cached formula results are shown, dates appear as raw numbers, and sheets are capped at 5000 rows and cells at 60 characters.
+- Documents: headings, lists and tables are kept, other formatting is dropped.
 
 ### Discovering more
 
