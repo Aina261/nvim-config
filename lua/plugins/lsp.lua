@@ -22,6 +22,21 @@ local function configure_language_servers()
       },
     },
   })
+
+  -- Pyright does not discover a project-local virtualenv by itself: point it
+  -- at <root>/.venv (uv, poetry in-project, python -m venv) when present, so
+  -- installed dependencies resolve instead of reporting missing imports.
+  vim.lsp.config('pyright', {
+    on_init = function(client)
+      local venv_python = (client.root_dir or '') .. '/.venv/bin/python'
+      if vim.uv.fs_stat(venv_python) then
+        client.settings = vim.tbl_deep_extend('force', client.settings or {}, {
+          python = { pythonPath = venv_python },
+        })
+        client:notify('workspace/didChangeConfiguration', { settings = client.settings })
+      end
+    end,
+  })
 end
 
 return {
