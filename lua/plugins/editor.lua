@@ -35,7 +35,8 @@ end
 return {
   {
     'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
+    -- 0.1.x calls the removed parsers.ft_to_lang of nvim-treesitter `main`
+    branch = 'master',
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
       require('telescope').setup()
