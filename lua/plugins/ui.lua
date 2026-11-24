@@ -26,6 +26,10 @@ return {
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
       filters = { git_ignored = false },
+      view = {
+        -- Auto-resize to fit the longest filename (min 30 cols, no max)
+        width = { min = 30, max = -1, padding = 1 },
+      },
       actions = {
         open_file = {
           window_picker = { enable = false },
