@@ -34,6 +34,8 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 | tokyonight.nvim | Color scheme (`tokyonight-night`) |
 | nvim-tree.lua | File explorer |
 | lualine.nvim | Status line, including the attached language servers |
+| bufferline.nvim | Buffers shown as tabs (`lua/plugins/tabs_autosave.lua`) |
+| autosave (local, `lua/plugins/tabs_autosave.lua`) | Saves modified files 500 ms after a change, on leaving insert mode, on buffer switch and on focus loss |
 | which-key.nvim | Popup listing the available keymaps |
 | telescope.nvim | Fuzzy finder for files, text and buffers |
 | nvim-treesitter (`main` branch) | Syntax highlighting and indentation |
@@ -209,6 +211,18 @@ providers and about `luarocks` are harmless for this configuration.
 | `<leader>e` | Normal | Focus the file explorer |
 | `<Esc>` | Normal | Clear search highlighting |
 | `<C-h>` `<C-j>` `<C-k>` `<C-l>` | Normal | Move to the left / bottom / top / right window |
+
+### Tabs (bufferline)
+
+Tabs are buffers, not Neovim tab pages. Defined in `lua/plugins/tabs_autosave.lua`:
+
+| Key | Mode | Action |
+| --- | --- | --- |
+| `<S-l>` / `<S-h>` | Normal | Next / previous tab |
+| `<leader>bp` | Normal | Pick a tab by its letter |
+| `<leader>bd` | Normal | Close the current tab |
+| `<leader>bo` | Normal | Close all other tabs |
+| `<leader>bh` / `<leader>bl` | Normal | Move the tab left / right |
 
 ### Search (Telescope)
 
