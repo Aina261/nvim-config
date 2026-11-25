@@ -51,6 +51,15 @@ return {
       local api = require('nvim-tree.api')
       local leaving = false
 
+      -- Opens the tree without stealing the focus from the current window.
+      local function open_tree_in_background()
+        local previous_window = vim.api.nvim_get_current_win()
+        api.tree.open()
+        if vim.api.nvim_win_is_valid(previous_window) then
+          vim.api.nvim_set_current_win(previous_window)
+        end
+      end
+
       -- Set vim.g.nvim_tree_allow_close = true to let the tree close on purpose
       -- (e.g. right before a restart).
       vim.api.nvim_create_autocmd('VimLeavePre', {
@@ -70,7 +79,7 @@ return {
             if leaving or vim.g.nvim_tree_allow_close or api.tree.is_visible() then
               return
             end
-            api.tree.open({ focus = false })
+            open_tree_in_background()
           end)
         end,
       })
@@ -84,7 +93,7 @@ return {
           vim.cmd('enew')
           vim.cmd('silent! bwipeout #')
         end
-        api.tree.open({ focus = false })
+        open_tree_in_background()
       end
 
       if vim.v.vim_did_enter == 1 then
