@@ -402,6 +402,14 @@ Opening one of these files shows a read-only Markdown rendering (so `render-mark
 - Spreadsheets: one table per sheet, with column letters and row numbers. Cached formula results are shown, dates appear as raw numbers, and sheets are capped at 5000 rows and cells at 60 characters.
 - Documents: headings, lists and tables are kept, other formatting is dropped.
 
+### Help popup
+
+| Command | Action |
+| --- | --- |
+| `:help` (or `:h`) | Open this keymap cheat sheet in a floating window (`lua/config/help.lua`) |
+| `:q` or `q` | Close the popup |
+| `:help {topic}` | Regular Neovim help |
+
 ### Discovering more
 
 Press `<leader>` and wait: which-key lists every available continuation.

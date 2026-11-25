@@ -5,6 +5,7 @@ vim.g.maplocalleader = ' '
 
 require('config.options')
 require('config.keymaps')
+require('config.help')
 require('config.lazy')
 
 print('✓ Neovim IDE configuration loaded!')
