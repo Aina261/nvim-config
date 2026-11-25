@@ -331,7 +331,7 @@ Press `g?` inside the explorer for the full list. The most useful keys:
 | `x` / `c` / `p` | Cut / copy / paste |
 | `R` | Refresh |
 | `H` | Toggle hidden files |
-| `q` | Close the explorer |
+| `q` | (disabled: the explorer always stays open and reopens if closed) |
 
 ### Markdown rendering (render-markdown.nvim)
 

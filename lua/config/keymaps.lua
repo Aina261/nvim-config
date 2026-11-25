@@ -25,6 +25,7 @@ local function restart_nvim()
   local tree = require('nvim-tree.api').tree
   local was_visible = tree.is_visible()
   if was_visible then
+    vim.g.nvim_tree_allow_close = true
     tree.close()
   end
 
