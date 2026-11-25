@@ -284,6 +284,7 @@ horizontal split, `<C-v>` in a vertical split, `<C-t>` in a new tab, `<C-c>` or 
 | `<leader>gh` / `<leader>gH` | Normal | Git history of the file / the repository |
 | `<leader>gq` | Normal | Close diffview |
 | `zR` / `zM` | Normal | Open / close all folds (ufo) |
+| `<leader>z` (or `za`) | Normal | Toggle the fold under the cursor: code block, Markdown section, function (click the `▸`/`▾` in the gutter works too) |
 | `<leader>re` / `<leader>rv` / `<leader>ri` | Normal, Visual | Extract function / extract variable / inline variable |
 | `<leader>rs` | Normal, Visual | Pick a refactoring from a menu |
 

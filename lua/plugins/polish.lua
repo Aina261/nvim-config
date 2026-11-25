@@ -20,6 +20,7 @@ return {
     keys = {
       { 'zR', function() require('ufo').openAllFolds() end, desc = 'Open all folds' },
       { 'zM', function() require('ufo').closeAllFolds() end, desc = 'Close all folds' },
+      { '<leader>z', 'za', desc = 'Toggle fold (code block, markdown section, function)' },
     },
   },
 
