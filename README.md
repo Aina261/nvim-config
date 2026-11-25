@@ -243,7 +243,7 @@ Defined in `lua/plugins/editor.lua`, active only in buffers tracked by git:
 | Key | Mode | Action |
 | --- | --- | --- |
 | `<leader>gb` | Normal | Blame the current line (popup with commit details) |
-| `<leader>gB` | Normal | Blame the whole file in a side window |
+| `<leader>gB` | Normal | Toggle the blame of the whole file in a side window (press again to close it) |
 | `<leader>gt` | Normal | Toggle inline blame at the end of the current line |
 
 ### LSP

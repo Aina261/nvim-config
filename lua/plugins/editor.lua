@@ -83,7 +83,18 @@ return {
           map('<leader>gb', function()
             gs.blame_line({ full = true })
           end, 'Git blame current line (popup)')
-          map('<leader>gB', gs.blame, 'Git blame whole file (side window)')
+          -- gitsigns' blame is not a toggle: calling it again while the blame
+          -- window is open fails with E95, so close the open window instead.
+          map('<leader>gB', function()
+            for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+              local buf = vim.api.nvim_win_get_buf(win)
+              if vim.bo[buf].filetype == 'gitsigns-blame' then
+                vim.api.nvim_win_close(win, true)
+                return
+              end
+            end
+            gs.blame()
+          end, 'Toggle git blame of the whole file (side window)')
           map('<leader>gt', gs.toggle_current_line_blame, 'Toggle inline git blame')
         end,
       })
