@@ -236,6 +236,16 @@ Tabs are buffers, not Neovim tab pages. Defined in `lua/plugins/tabs_autosave.lu
 Inside a Telescope prompt: `<C-n>` / `<C-p>` move the selection, `<CR>` opens, `<C-x>` opens in a
 horizontal split, `<C-v>` in a vertical split, `<C-t>` in a new tab, `<C-c>` or `<Esc>` closes.
 
+### Git blame (gitsigns)
+
+Defined in `lua/plugins/editor.lua`, active only in buffers tracked by git:
+
+| Key | Mode | Action |
+| --- | --- | --- |
+| `<leader>gb` | Normal | Blame the current line (popup with commit details) |
+| `<leader>gB` | Normal | Blame the whole file in a side window |
+| `<leader>gt` | Normal | Toggle inline blame at the end of the current line |
+
 ### LSP
 
 Defined in `lua/config/lsp_keymaps.lua`, active only in buffers with an attached server:

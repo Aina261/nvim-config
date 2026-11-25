@@ -73,7 +73,20 @@ return {
   {
     'lewis6991/gitsigns.nvim',
     config = function()
-      require('gitsigns').setup()
+      require('gitsigns').setup({
+        on_attach = function(bufnr)
+          local gs = require('gitsigns')
+          local function map(lhs, rhs, desc)
+            vim.keymap.set('n', lhs, rhs, { buffer = bufnr, desc = desc })
+          end
+
+          map('<leader>gb', function()
+            gs.blame_line({ full = true })
+          end, 'Git blame current line (popup)')
+          map('<leader>gB', gs.blame, 'Git blame whole file (side window)')
+          map('<leader>gt', gs.toggle_current_line_blame, 'Toggle inline git blame')
+        end,
+      })
     end,
   },
 
