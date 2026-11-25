@@ -107,6 +107,17 @@ Packages currently left out for that reason: `gitlab-ci-ls`, `prettypst`, `luach
 
 Then set your terminal font to the installed Nerd Font (e.g. `JetBrainsMono Nerd Font`).
 
+### Icons show as `?` or empty boxes
+
+The terminal is not using a Nerd Font, so it cannot draw the icons. Installing the font is not
+enough: select it in the terminal settings, then restart Neovim.
+
+| Terminal | Where to set the font |
+| --- | --- |
+| iTerm2 | `Settings` > `Profiles` > `Text` > `Font`: `JetBrainsMono Nerd Font Mono` |
+| Windows Terminal | `Settings` > profile > `Appearance` > `Font face` |
+| Other | Look for the font option in the terminal preferences |
+
 ## Installation
 
 Install the requirements for your system, put this configuration at the path below, then start
@@ -357,7 +368,7 @@ Press `<leader>` and wait: which-key lists every available continuation.
 
 ## Notable options
 
-Relative and absolute line numbers, mouse enabled, smart-case search without highlight,
+Absolute line numbers, mouse enabled, smart-case search without highlight,
 4-space indentation (spaces), no line wrapping, `scrolloff = 10`, system clipboard shared with
 Neovim (`unnamedplus`), splits opening to the right and below.
 
