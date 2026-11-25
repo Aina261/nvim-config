@@ -1,7 +1,7 @@
 local option = vim.opt
 
 option.number = true
-option.relativenumber = true
+option.relativenumber = false
 option.mouse = 'a'
 option.ignorecase = true
 option.smartcase = true
