@@ -18,3 +18,7 @@ option.updatetime = 250
 option.scrolloff = 10
 option.splitright = true
 option.splitbelow = true
+
+-- Used by `:restart`. Without `blank`, special windows such as nvim-tree are
+-- not saved as empty windows that break the layout once restored.
+option.sessionoptions = { 'buffers', 'curdir', 'folds', 'tabpages', 'winsize' }

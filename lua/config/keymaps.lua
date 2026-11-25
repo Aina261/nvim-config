@@ -19,6 +19,22 @@ local function jump_to_diagnostic(direction)
   end
 end
 
+-- Closes nvim-tree before the session is saved, then reopens it once the
+-- session is restored, so the tree never ends up in the saved layout.
+local function restart_nvim()
+  local tree = require('nvim-tree.api').tree
+  local was_visible = tree.is_visible()
+  if was_visible then
+    tree.close()
+  end
+
+  if was_visible then
+    vim.cmd("restart lua require('nvim-tree.api').tree.open({ focus = false })")
+  else
+    vim.cmd('restart')
+  end
+end
+
 local function set_file_and_window_keymaps()
   map('n', '<leader>w', '<cmd>w<CR>', 'Save file')
   map('n', '<leader>q', '<cmd>q<CR>', 'Quit window')
@@ -57,6 +73,7 @@ local function set_diagnostic_and_lsp_management_keymaps()
   map('n', '<leader>li', '<cmd>checkhealth vim.lsp<CR>', 'Show LSP information')
   map('n', '<leader>lr', '<cmd>lsp restart<CR>', 'Restart LSP')
   map('n', '<leader>m', '<cmd>Mason<CR>', 'Open Mason')
+  map('n', '<leader>R', restart_nvim, 'Restart Neovim and restore the session')
 end
 
 set_file_and_window_keymaps()

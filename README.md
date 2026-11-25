@@ -285,6 +285,7 @@ Provided by Neovim 0.11+ itself when a server attaches:
 | `<leader>li` | Normal | LSP health information (`:checkhealth vim.lsp`) |
 | `<leader>lr` | Normal | Restart the language servers (`:lsp restart`) |
 | `<leader>m` | Normal | Open Mason |
+| `<leader>R` | Normal | Restart Neovim and restore open buffers (nvim-tree is closed then reopened) |
 
 ### Completion (blink.cmp, `super-tab` preset)
 
