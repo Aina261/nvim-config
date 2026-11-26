@@ -1,3 +1,15 @@
+-- Close a buffer and go back to the previously used one (alternate buffer).
+local function close_buf(bufnr)
+  bufnr = (bufnr and bufnr ~= 0) and bufnr or vim.api.nvim_get_current_buf()
+  if vim.api.nvim_get_current_buf() == bufnr then
+    local alt = vim.fn.bufnr('#')
+    if alt > 0 and alt ~= bufnr and vim.api.nvim_buf_is_valid(alt) and vim.bo[alt].buflisted then
+      vim.cmd('buffer ' .. alt)
+    end
+  end
+  vim.cmd('bdelete ' .. bufnr)
+end
+
 return {
   {
     'akinsho/bufferline.nvim',
@@ -9,6 +21,8 @@ return {
         mode = 'buffers',
         diagnostics = 'nvim_lsp',
         always_show_bufferline = true,
+        close_command = close_buf,
+        right_mouse_command = close_buf,
         offsets = {
           { filetype = 'NvimTree', text = 'Explorer', text_align = 'left', separator = true },
         },
@@ -17,7 +31,7 @@ return {
     keys = {
       { '<S-l>', '<cmd>BufferLineCycleNext<CR>', desc = 'Next tab' },
       { '<S-h>', '<cmd>BufferLineCyclePrev<CR>', desc = 'Previous tab' },
-      { '<leader>bd', '<cmd>bdelete<CR>', desc = 'Close tab' },
+      { '<leader>bd', close_buf, desc = 'Close tab' },
       { '<leader>bo', '<cmd>BufferLineCloseOthers<CR>', desc = 'Close other tabs' },
       { '<leader>bp', '<cmd>BufferLinePick<CR>', desc = 'Pick tab' },
       { '<leader>bh', '<cmd>BufferLineMovePrev<CR>', desc = 'Move tab left' },
