@@ -1,7 +1,6 @@
 -- Non-intrusive diagnostics popup: shown for the current line once the cursor
 -- rests on it (`updatetime`, 250ms), never focusable, closed on next movement,
--- pinned to the top-right corner of the window (bottom-right if the cursor
--- is near the top, so the popup never covers the current line).
+-- always pinned to the bottom-right corner of the window.
 vim.diagnostic.config({
   severity_sort = true,
   float = {
@@ -27,16 +26,12 @@ vim.api.nvim_create_autocmd('CursorHold', {
     })
     if not float then return end
 
-    -- Pin the popup to the top-right corner of the window. If the cursor line
-    -- is that close to the top, move it to the bottom-right so it never hides
-    -- the code being edited.
-    local height = vim.api.nvim_win_get_height(float) + 2 -- + border
-    local at_top = vim.fn.winline() > height
+    -- Always pin the popup to the bottom-right corner of the window.
     vim.api.nvim_win_set_config(float, {
       relative = 'win',
       win = win,
-      anchor = at_top and 'NE' or 'SE',
-      row = at_top and 0 or vim.api.nvim_win_get_height(win),
+      anchor = 'SE',
+      row = vim.api.nvim_win_get_height(win),
       col = vim.api.nvim_win_get_width(win),
     })
   end,
