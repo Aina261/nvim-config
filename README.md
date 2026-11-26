@@ -34,51 +34,51 @@ Every file in `lua/plugins/` is imported automatically by lazy.nvim.
 
 ## Plugins
 
-| Plugin | Purpose |
-| --- | --- |
-| tokyonight.nvim | Color scheme (`tokyonight-night`) |
-| nvim-tree.lua | File explorer |
-| lualine.nvim | Status line, including the attached language servers |
-| bufferline.nvim | Buffers shown as tabs (`lua/plugins/tabs_autosave.lua`) |
+| Plugin                                            | Purpose                                                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| tokyonight.nvim                                   | Color scheme (`tokyonight-night`)                                                                      |
+| nvim-tree.lua                                     | File explorer                                                                                          |
+| lualine.nvim                                      | Status line, including the attached language servers                                                   |
+| bufferline.nvim                                   | Buffers shown as tabs (`lua/plugins/tabs_autosave.lua`)                                                |
 | autosave (local, `lua/plugins/tabs_autosave.lua`) | Saves modified files 500 ms after a change, on leaving insert mode, on buffer switch and on focus loss |
-| which-key.nvim | Popup listing the available keymaps |
-| telescope.nvim | Fuzzy finder for files, text and buffers |
-| nvim-treesitter (`main` branch) | Syntax highlighting and indentation |
-| Comment.nvim | Toggle comments |
-| nvim-autopairs | Close brackets and quotes automatically |
-| gitsigns.nvim | Git changes in the gutter |
-| pdf-view.nvim | View PDF files inside Neovim (iTerm2 inline images) |
-| sqlite-viewer.nvim | Browse SQLite database files as tables (needs `sqlite3`) |
-| office-viewer (local, `lua/office_viewer.lua`) | View `.xlsx`, `.xlsm` and `.docx` files as read-only Markdown (needs `unzip`) |
-| render-markdown.nvim | Render Markdown in the buffer, toggled with `<leader>mp` in `.md` files |
-| blink.cmp + friendly-snippets | Completion (LSP, paths, snippets, buffer) |
-| mason.nvim + mason-lspconfig.nvim | Install and enable language servers |
-| toggleterm.nvim | Integrated terminal (bottom, floating) and lazygit |
-| conform.nvim | Formatting, on save by default |
-| nvim-lint | Linting (ruff, eslint_d when a config exists, markdownlint-cli2) |
-| trouble.nvim | Diagnostics, symbols, references and TODO panels |
-| aerial.nvim | Symbol outline sidebar |
-| todo-comments.nvim | Highlight and search TODO/FIXME comments |
-| diffview.nvim | Git diffs, file history, merge conflicts |
-| nvim-ufo | Better folding (treesitter, indent) |
-| indent-blankline.nvim | Indent guides |
-| noice.nvim + nui.nvim | Modern command line, messages and LSP docs |
-| dropbar.nvim | Breadcrumbs in the winbar |
-| refactoring.nvim | Extract function/variable, inline |
-| mason-tool-installer.nvim | Installs every Mason package listed in `lua/plugins/mason_tools.lua` |
-| nvim-lspconfig | Default configuration of each language server |
-| lazydev.nvim | Lua language server awareness of the Neovim API |
+| which-key.nvim                                    | Popup listing the available keymaps                                                                    |
+| telescope.nvim                                    | Fuzzy finder for files, text and buffers                                                               |
+| nvim-treesitter (`main` branch)                   | Syntax highlighting and indentation                                                                    |
+| Comment.nvim                                      | Toggle comments                                                                                        |
+| nvim-autopairs                                    | Close brackets and quotes automatically                                                                |
+| gitsigns.nvim                                     | Git changes in the gutter                                                                              |
+| pdf-view.nvim                                     | View PDF files inside Neovim (iTerm2 inline images)                                                    |
+| sqlite-viewer.nvim                                | Browse SQLite database files as tables (needs `sqlite3`)                                               |
+| office-viewer (local, `lua/office_viewer.lua`)    | View `.xlsx`, `.xlsm` and `.docx` files as read-only Markdown (needs `unzip`)                          |
+| render-markdown.nvim                              | Render Markdown in the buffer, toggled with `<leader>mp` in `.md` files                                |
+| blink.cmp + friendly-snippets                     | Completion (LSP, paths, snippets, buffer)                                                              |
+| mason.nvim + mason-lspconfig.nvim                 | Install and enable language servers                                                                    |
+| toggleterm.nvim                                   | Integrated terminal (bottom, floating) and lazygit                                                     |
+| conform.nvim                                      | Formatting, on save by default                                                                         |
+| nvim-lint                                         | Linting (ruff, eslint_d when a config exists, markdownlint-cli2)                                       |
+| trouble.nvim                                      | Diagnostics, symbols, references and TODO panels                                                       |
+| aerial.nvim                                       | Symbol outline sidebar                                                                                 |
+| todo-comments.nvim                                | Highlight and search TODO/FIXME comments                                                               |
+| diffview.nvim                                     | Git diffs, file history, merge conflicts                                                               |
+| nvim-ufo                                          | Better folding (treesitter, indent)                                                                    |
+| indent-blankline.nvim                             | Indent guides                                                                                          |
+| noice.nvim + nui.nvim                             | Modern command line, messages and LSP docs                                                             |
+| dropbar.nvim                                      | Breadcrumbs in the winbar                                                                              |
+| refactoring.nvim                                  | Extract function/variable, inline                                                                      |
+| mason-tool-installer.nvim                         | Installs every Mason package listed in `lua/plugins/mason_tools.lua`                                   |
+| nvim-lspconfig                                    | Default configuration of each language server                                                          |
+| lazydev.nvim                                      | Lua language server awareness of the Neovim API                                                        |
 
 ## Language servers
 
 Installed automatically by Mason and enabled by `mason-lspconfig`:
 
-| Server | Language |
-| --- | --- |
-| `lua_ls` | Lua |
-| `pyright` | Python |
-| `ts_ls` | JavaScript / TypeScript |
-| `bashls` | Bash / sh |
+| Server    | Language                |
+| --------- | ----------------------- |
+| `lua_ls`  | Lua                     |
+| `pyright` | Python                  |
+| `ts_ls`   | JavaScript / TypeScript |
+| `bashls`  | Bash / sh               |
 
 To add a server, append its name to `LANGUAGE_SERVERS_TO_INSTALL` in `lua/plugins/lsp.lua`.
 Only override settings with `vim.lsp.config('<server>', { settings = ... })`: the command,
@@ -94,34 +94,34 @@ Mason name to that list (find names with `:Mason`).
 Some packages are built with a toolchain that Mason does not provide. If one is needed, install the
 toolchain and run `:MasonToolsInstall`:
 
-| Package needs | Install |
-| --- | --- |
-| `cargo` (Rust packages) | `rustup` or `brew install rust` |
-| `luarocks` (Lua packages) | `brew install luarocks` / your package manager |
-| JDK and `maven` (Java packages) | `brew install openjdk maven` |
-| Python 3.9 to 3.13 (some Python packages) | Mason refuses Python 3.14 and newer |
+| Package needs                             | Install                                        |
+| ----------------------------------------- | ---------------------------------------------- |
+| `cargo` (Rust packages)                   | `rustup` or `brew install rust`                |
+| `luarocks` (Lua packages)                 | `brew install luarocks` / your package manager |
+| JDK and `maven` (Java packages)           | `brew install openjdk maven`                   |
+| Python with `venv` (some Python packages) | Any Python 3.x, latest stable included         |
 
-Packages currently left out for that reason: `gitlab-ci-ls`, `prettypst`, `luacheck`,
-`luaformatter`, `java-language-server`, `nginx-language-server`.
+Packages currently left out: `gitlab-ci-ls`, `prettypst`, `luacheck`, `luaformatter`,
+`java-language-server`, `nginx-language-server`.
 
 ## Requirements
 
-| Tool | Why it is needed |
-| --- | --- |
-| Neovim 0.11+ | Native LSP configuration API (`vim.lsp.config`) |
-| `git` | Clones lazy.nvim and every plugin |
-| C compiler (`cc` / `gcc` / `clang`) | nvim-treesitter compiles each parser locally |
+| Tool                                                                                             | Why it is needed                                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Neovim 0.11+                                                                                     | Native LSP configuration API (`vim.lsp.config`)                                                                                                                          |
+| `git`                                                                                            | Clones lazy.nvim and every plugin                                                                                                                                        |
+| C compiler (`cc` / `gcc` / `clang`)                                                              | nvim-treesitter compiles each parser locally                                                                                                                             |
 | [`tree-sitter` CLI](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md) | Required by the `main` branch of nvim-treesitter to build parsers. Without it every parser install fails (`error during tree-sitter build`) and highlighting is disabled |
-| `tar` and `curl` | nvim-treesitter downloads and unpacks parser sources |
-| `node` and `npm` | Mason installs many packages with npm (`ts_ls`, `bashls`, `prettier`, `eslint_d`...) |
-| `python3` 3.9 to 3.13 (with `venv`) | Mason installs Python packages (`black`, `sqlfluff`, `python-lsp-server`...) in virtual environments |
-| `unzip`, `gzip`, `wget` or `curl` | Mason downloads and unpacks servers (`lua_ls` is a binary release) |
-| `ripgrep` (`rg`) | Telescope live grep (`<leader>fg`) |
-| `fd` (optional) | Faster file finding in Telescope |
-| `mutool` (MuPDF) | pdf-view.nvim renders PDF pages with it |
-| `lazygit` (optional) | `<leader>gg` opens it in a floating terminal (`brew install lazygit`) |
-| A [Nerd Font](https://www.nerdfonts.com/) | Icons in the explorer, status line and Mason |
-| Clipboard tool (Linux only) | `clipboard=unnamedplus` needs `xclip`, `xsel` or `wl-clipboard` |
+| `tar` and `curl`                                                                                 | nvim-treesitter downloads and unpacks parser sources                                                                                                                     |
+| `node` and `npm`                                                                                 | Mason installs many packages with npm (`ts_ls`, `bashls`, `prettier`, `eslint_d`...)                                                                                     |
+| `python3` (latest stable, with `venv`)                                                           | Mason installs Python packages (`black`, `sqlfluff`, `python-lsp-server`...) in virtual environments                                                                     |
+| `unzip`, `gzip`, `wget` or `curl`                                                                | Mason downloads and unpacks servers (`lua_ls` is a binary release)                                                                                                       |
+| `ripgrep` (`rg`)                                                                                 | Telescope live grep (`<leader>fg`)                                                                                                                                       |
+| `fd` (optional)                                                                                  | Faster file finding in Telescope                                                                                                                                         |
+| `mutool` (MuPDF)                                                                                 | pdf-view.nvim renders PDF pages with it                                                                                                                                  |
+| `lazygit` (optional)                                                                             | `<leader>gg` opens it in a floating terminal (`brew install lazygit`)                                                                                                    |
+| A [Nerd Font](https://www.nerdfonts.com/)                                                        | Icons in the explorer, status line and Mason                                                                                                                             |
+| Clipboard tool (Linux only)                                                                      | `clipboard=unnamedplus` needs `xclip`, `xsel` or `wl-clipboard`                                                                                                          |
 
 Then set your terminal font to the installed Nerd Font (e.g. `JetBrainsMono Nerd Font`).
 
@@ -130,11 +130,11 @@ Then set your terminal font to the installed Nerd Font (e.g. `JetBrainsMono Nerd
 The terminal is not using a Nerd Font, so it cannot draw the icons. Installing the font is not
 enough: select it in the terminal settings, then restart Neovim.
 
-| Terminal | Where to set the font |
-| --- | --- |
-| iTerm2 | `Settings` > `Profiles` > `Text` > `Font`: `JetBrainsMono Nerd Font Mono` |
-| Windows Terminal | `Settings` > profile > `Appearance` > `Font face` |
-| Other | Look for the font option in the terminal preferences |
+| Terminal         | Where to set the font                                                     |
+| ---------------- | ------------------------------------------------------------------------- |
+| iTerm2           | `Settings` > `Profiles` > `Text` > `Font`: `JetBrainsMono Nerd Font Mono` |
+| Windows Terminal | `Settings` > profile > `Appearance` > `Font face`                         |
+| Other            | Look for the font option in the terminal preferences                      |
 
 ## Installation
 
@@ -143,18 +143,21 @@ Install the requirements for your system, put this configuration at the path bel
 mason-tool-installer installs all Mason packages (about 57, it takes a few minutes: wait until
 the messages stop, then restart Neovim).
 
-| System | Configuration path |
-| --- | --- |
-| macOS / Linux | `~/.config/nvim` |
-| Windows | `%LOCALAPPDATA%\nvim` |
+| System        | Configuration path    |
+| ------------- | --------------------- |
+| macOS / Linux | `~/.config/nvim`      |
+| Windows       | `%LOCALAPPDATA%\nvim` |
 
 ### macOS (Homebrew)
 
 ```sh
 xcode-select --install   # C compiler, git, tar, curl (skip if already installed)
-brew install neovim tree-sitter-cli node python@3.13 ripgrep fd unzip mupdf
+brew install neovim tree-sitter-cli node python ripgrep fd unzip mupdf
 brew install --cask font-jetbrains-mono-nerd-font
 ```
+
+Homebrew's `python` formula always tracks the latest stable release (3.15 at the time of writing),
+so a plain `brew upgrade python` is all that is needed to stay current.
 
 ### Linux
 
@@ -181,6 +184,10 @@ Arch:
 sudo pacman -S --needed git base-devel python curl wget unzip tar gzip ripgrep fd nodejs npm neovim tree-sitter-cli wl-clipboard
 ```
 
+Distribution packages can lag behind. To get the latest stable Python instead, use uv (it is
+already in the Mason list): `uv python install --default`, then `uv python upgrade` to keep it
+current. Pyenv works too if you prefer it.
+
 Neovim and the `tree-sitter` CLI on Debian / Ubuntu / Fedora (when the packaged versions are too old):
 
 ```sh
@@ -199,7 +206,17 @@ Nerd Font: download one from <https://www.nerdfonts.com/font-downloads>, unzip i
 Run in PowerShell (Windows 10 / 11 already ship `tar` and `curl`):
 
 ```powershell
-winget install Neovim.Neovim Git.Git OpenJS.NodeJS.LTS Python.Python.3.13 BurntSushi.ripgrep.MSVC sharkdp.fd 7zip.7zip
+winget install Neovim.Neovim Git.Git OpenJS.NodeJS.LTS BurntSushi.ripgrep.MSVC sharkdp.fd 7zip.7zip
+
+# Python: install the newest 3.x that winget publishes (rerun this to upgrade)
+$py = winget search --source winget --accept-source-agreements Python.Python.3 |
+  Select-String 'Python\.Python\.(3\.\d+)' |
+  ForEach-Object { $_.Matches[0].Groups[1].Value } |
+  Sort-Object { [version]$_ } |
+  Select-Object -Last 1
+winget install --id "Python.Python.$py" -e --source winget
+# if the lookup fails: winget install --id Python.Python.3.15 -e --source winget
+
 winget install tree-sitter.tree-sitter-cli   # or: npm install -g tree-sitter-cli
 winget install zig.zig                       # C compiler for treesitter parsers
 ```
@@ -232,169 +249,169 @@ providers and about `luarocks` are harmless for this configuration.
 
 ### Files and windows
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<leader>w` | Normal | Save file |
-| `<leader>q` | Normal | Quit window |
-| `<leader>da` | Normal | Delete all file content (sent to the black hole register) |
-| `<leader>e` | Normal | Focus the file explorer |
-| `<Esc>` | Normal | Clear search highlighting |
-| `<C-h>` `<C-j>` `<C-k>` `<C-l>` | Normal | Move to the left / bottom / top / right window |
+| Key                             | Mode   | Action                                                    |
+| ------------------------------- | ------ | --------------------------------------------------------- |
+| `<leader>w`                     | Normal | Save file                                                 |
+| `<leader>q`                     | Normal | Quit window                                               |
+| `<leader>da`                    | Normal | Delete all file content (sent to the black hole register) |
+| `<leader>e`                     | Normal | Focus the file explorer                                   |
+| `<Esc>`                         | Normal | Clear search highlighting                                 |
+| `<C-h>` `<C-j>` `<C-k>` `<C-l>` | Normal | Move to the left / bottom / top / right window            |
 
 ### Tabs (bufferline)
 
 Tabs are buffers, not Neovim tab pages. Defined in `lua/plugins/tabs_autosave.lua`:
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<S-l>` / `<S-h>` | Normal | Next / previous tab |
-| `<leader>bp` | Normal | Pick a tab by its letter |
-| `<leader>bd` | Normal | Close the current tab |
-| `<leader>bo` | Normal | Close all other tabs |
+| Key                         | Mode   | Action                    |
+| --------------------------- | ------ | ------------------------- |
+| `<S-l>` / `<S-h>`           | Normal | Next / previous tab       |
+| `<leader>bp`                | Normal | Pick a tab by its letter  |
+| `<leader>bd`                | Normal | Close the current tab     |
+| `<leader>bo`                | Normal | Close all other tabs      |
 | `<leader>bh` / `<leader>bl` | Normal | Move the tab left / right |
 
 ### Search (Telescope)
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<leader>ff` | Normal | Find file in the project |
+| Key          | Mode   | Action                                 |
+| ------------ | ------ | -------------------------------------- |
+| `<leader>ff` | Normal | Find file in the project               |
 | `<leader>fg` | Normal | Search text in the project (live grep) |
-| `<leader>fb` | Normal | Show open buffers |
-| `<leader>fr` | Normal | Fuzzy find text in the current file |
+| `<leader>fb` | Normal | Show open buffers                      |
+| `<leader>fr` | Normal | Fuzzy find text in the current file    |
 
 Inside a Telescope prompt: `<C-n>` / `<C-p>` move the selection, `<CR>` opens, `<C-x>` opens in a
 horizontal split, `<C-v>` in a vertical split, `<C-t>` in a new tab, `<C-c>` or `<Esc>` closes.
 
 ### IDE features
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<C-\>` / `<leader>tt` | Normal, Terminal | Toggle the terminal at the bottom (`<Esc><Esc>` leaves terminal mode) |
-| `<leader>tf` | Normal | Floating terminal |
-| `<leader>gg` | Normal | Lazygit (needs `brew install lazygit`) |
-| `<leader>cf` | Normal, Visual | Format the file or selection |
-| `<leader>uf` | Normal | Toggle format on save |
-| `<leader>xx` / `<leader>xX` | Normal | Diagnostics of the project / the buffer (trouble) |
-| `<leader>xs` / `<leader>xl` | Normal | Symbols / LSP references panel |
-| `<leader>xL` / `<leader>xq` | Normal | Location list / quickfix list in trouble |
-| `<leader>xt`, `<leader>ft` | Normal | TODO comments in trouble / Telescope |
-| `]t` / `[t` | Normal | Next / previous TODO comment |
-| `<leader>o` | Normal | Toggle the symbol outline (aerial); `{` / `}` jump to the previous / next symbol |
-| `<leader>gd` / `<leader>gD` | Normal | Git diff of the working tree / against `origin/HEAD` |
-| `<leader>gh` / `<leader>gH` | Normal | Git history of the file / the repository |
-| `<leader>gq` | Normal | Close diffview |
-| `zR` / `zM` | Normal | Open / close all folds (ufo) |
-| `<leader>z` (or `za`) | Normal | Toggle the fold under the cursor: code block, Markdown section, function (click the `▸`/`▾` in the gutter works too) |
-| `<leader>re` / `<leader>rv` / `<leader>ri` | Normal, Visual | Extract function / extract variable / inline variable |
-| `<leader>rs` | Normal, Visual | Pick a refactoring from a menu |
+| Key                                        | Mode             | Action                                                                                                               |
+| ------------------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `<C-\>` / `<leader>tt`                     | Normal, Terminal | Toggle the terminal at the bottom (`<Esc><Esc>` leaves terminal mode)                                                |
+| `<leader>tf`                               | Normal           | Floating terminal                                                                                                    |
+| `<leader>gg`                               | Normal           | Lazygit (needs `brew install lazygit`)                                                                               |
+| `<leader>cf`                               | Normal, Visual   | Format the file or selection                                                                                         |
+| `<leader>uf`                               | Normal           | Toggle format on save                                                                                                |
+| `<leader>xx` / `<leader>xX`                | Normal           | Diagnostics of the project / the buffer (trouble)                                                                    |
+| `<leader>xs` / `<leader>xl`                | Normal           | Symbols / LSP references panel                                                                                       |
+| `<leader>xL` / `<leader>xq`                | Normal           | Location list / quickfix list in trouble                                                                             |
+| `<leader>xt`, `<leader>ft`                 | Normal           | TODO comments in trouble / Telescope                                                                                 |
+| `]t` / `[t`                                | Normal           | Next / previous TODO comment                                                                                         |
+| `<leader>o`                                | Normal           | Toggle the symbol outline (aerial); `{` / `}` jump to the previous / next symbol                                     |
+| `<leader>gd` / `<leader>gD`                | Normal           | Git diff of the working tree / against `origin/HEAD`                                                                 |
+| `<leader>gh` / `<leader>gH`                | Normal           | Git history of the file / the repository                                                                             |
+| `<leader>gq`                               | Normal           | Close diffview                                                                                                       |
+| `zR` / `zM`                                | Normal           | Open / close all folds (ufo)                                                                                         |
+| `<leader>z` (or `za`)                      | Normal           | Toggle the fold under the cursor: code block, Markdown section, function (click the `▸`/`▾` in the gutter works too) |
+| `<leader>re` / `<leader>rv` / `<leader>ri` | Normal, Visual   | Extract function / extract variable / inline variable                                                                |
+| `<leader>rs`                               | Normal, Visual   | Pick a refactoring from a menu                                                                                       |
 
 ### Git blame (gitsigns)
 
 Defined in `lua/plugins/editor.lua`, active only in buffers tracked by git:
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<leader>gb` | Normal | Blame the current line (popup with commit details) |
+| Key          | Mode   | Action                                                                        |
+| ------------ | ------ | ----------------------------------------------------------------------------- |
+| `<leader>gb` | Normal | Blame the current line (popup with commit details)                            |
 | `<leader>gB` | Normal | Toggle the blame of the whole file in a side window (press again to close it) |
-| `<leader>gt` | Normal | Toggle inline blame at the end of the current line |
+| `<leader>gt` | Normal | Toggle inline blame at the end of the current line                            |
 
 ### LSP
 
 Defined in `lua/config/lsp_keymaps.lua`, active only in buffers with an attached server:
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `gd` | Normal | Go to definition |
-| `gD` | Normal | Go to declaration |
-| `<leader>cf` | Normal, Visual | Format the file or selection (conform.nvim, see *IDE features*) |
+| Key          | Mode           | Action                                                          |
+| ------------ | -------------- | --------------------------------------------------------------- |
+| `gd`         | Normal         | Go to definition                                                |
+| `gD`         | Normal         | Go to declaration                                               |
+| `<leader>cf` | Normal, Visual | Format the file or selection (conform.nvim, see _IDE features_) |
 
 Provided by Neovim 0.11+ itself when a server attaches:
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `K` | Normal | Show documentation (hover) |
-| `grn` | Normal | Rename symbol |
-| `gra` | Normal / Visual | Code actions |
-| `grr` | Normal | Show references |
-| `gri` | Normal | Go to implementation |
-| `grt` | Normal | Go to type definition |
-| `gO` | Normal | Document symbols |
-| `<C-s>` | Insert | Signature help |
+| Key     | Mode            | Action                     |
+| ------- | --------------- | -------------------------- |
+| `K`     | Normal          | Show documentation (hover) |
+| `grn`   | Normal          | Rename symbol              |
+| `gra`   | Normal / Visual | Code actions               |
+| `grr`   | Normal          | Show references            |
+| `gri`   | Normal          | Go to implementation       |
+| `grt`   | Normal          | Go to type definition      |
+| `gO`    | Normal          | Document symbols           |
+| `<C-s>` | Insert          | Signature help             |
 
 ### Diagnostics
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `[d` | Normal | Jump to the previous diagnostic (opens the float) |
-| `]d` | Normal | Jump to the next diagnostic (opens the float) |
-| `<leader>xd` | Normal | Show the diagnostic under the cursor |
-| `<leader>D` | Normal | Put all diagnostics in the location list |
+| Key          | Mode   | Action                                            |
+| ------------ | ------ | ------------------------------------------------- |
+| `[d`         | Normal | Jump to the previous diagnostic (opens the float) |
+| `]d`         | Normal | Jump to the next diagnostic (opens the float)     |
+| `<leader>xd` | Normal | Show the diagnostic under the cursor              |
+| `<leader>D`  | Normal | Put all diagnostics in the location list          |
 
 ### Tooling
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<leader>li` | Normal | LSP health information (`:checkhealth vim.lsp`) |
-| `<leader>lr` | Normal | Restart the language servers (`:lsp restart`) |
-| `<leader>m` | Normal | Open Mason |
-| `<leader>R` | Normal | Restart Neovim and restore open buffers (nvim-tree is closed then reopened) |
+| Key          | Mode   | Action                                                                      |
+| ------------ | ------ | --------------------------------------------------------------------------- |
+| `<leader>li` | Normal | LSP health information (`:checkhealth vim.lsp`)                             |
+| `<leader>lr` | Normal | Restart the language servers (`:lsp restart`)                               |
+| `<leader>m`  | Normal | Open Mason                                                                  |
+| `<leader>R`  | Normal | Restart Neovim and restore open buffers (nvim-tree is closed then reopened) |
 
 ### Completion (blink.cmp, `super-tab` preset)
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `<Tab>` | Insert | Accept the selected item, or jump to the next snippet field |
-| `<S-Tab>` | Insert | Jump to the previous snippet field |
-| `<Down>` / `<C-n>` | Insert | Select the next item |
-| `<Up>` / `<C-p>` | Insert | Select the previous item |
-| `<C-space>` | Insert | Open the menu / toggle documentation |
-| `<C-e>` | Insert | Close the menu |
-| `<C-d>` / `<C-u>` | Insert | Scroll the documentation down / up |
+| Key                | Mode   | Action                                                      |
+| ------------------ | ------ | ----------------------------------------------------------- |
+| `<Tab>`            | Insert | Accept the selected item, or jump to the next snippet field |
+| `<S-Tab>`          | Insert | Jump to the previous snippet field                          |
+| `<Down>` / `<C-n>` | Insert | Select the next item                                        |
+| `<Up>` / `<C-p>`   | Insert | Select the previous item                                    |
+| `<C-space>`        | Insert | Open the menu / toggle documentation                        |
+| `<C-e>`            | Insert | Close the menu                                              |
+| `<C-d>` / `<C-u>`  | Insert | Scroll the documentation down / up                          |
 
 ### Comments (built into Neovim 0.10+, also provided by Comment.nvim)
 
-| Key | Mode | Action |
-| --- | --- | --- |
-| `gcc` | Normal | Toggle comment on the current line |
+| Key          | Mode   | Action                                                   |
+| ------------ | ------ | -------------------------------------------------------- |
+| `gcc`        | Normal | Toggle comment on the current line                       |
 | `gc{motion}` | Normal | Toggle comment on a motion (e.g. `gcap` for a paragraph) |
-| `gc` | Visual | Toggle comment on the selection |
+| `gc`         | Visual | Toggle comment on the selection                          |
 
 ### File explorer (nvim-tree)
 
 Press `g?` inside the explorer for the full list. The most useful keys:
 
-| Key | Action |
-| --- | --- |
-| `<CR>` / `o` | Open file or folder |
-| `a` | Create a file or folder (end the name with `/` for a folder) |
-| `d` | Delete |
-| `r` | Rename |
-| `x` / `c` / `p` | Cut / copy / paste |
-| `R` | Refresh |
-| `H` | Toggle hidden files |
-| `q` | (disabled: the explorer always stays open and reopens if closed) |
+| Key             | Action                                                           |
+| --------------- | ---------------------------------------------------------------- |
+| `<CR>` / `o`    | Open file or folder                                              |
+| `a`             | Create a file or folder (end the name with `/` for a folder)     |
+| `d`             | Delete                                                           |
+| `r`             | Rename                                                           |
+| `x` / `c` / `p` | Cut / copy / paste                                               |
+| `R`             | Refresh                                                          |
+| `H`             | Toggle hidden files                                              |
+| `q`             | (disabled: the explorer always stays open and reopens if closed) |
 
 ### Markdown rendering (render-markdown.nvim)
 
 Active by default in `.md` files. The keymap only exists in Markdown buffers.
 
-| Key | Action |
-| --- | --- |
+| Key          | Action                                      |
+| ------------ | ------------------------------------------- |
 | `<leader>mp` | Toggle the rendering for the current buffer |
 
 ### PDF viewer (pdf-view.nvim)
 
 Opening a `.pdf` (`:e file.pdf`, `nvim file.pdf`, nvim-tree) shows it as a page image. Press `g?` in the viewer for the full list.
 
-| Key | Action |
-| --- | --- |
-| `j` / `k` | Scroll, turning the page at the edge |
-| `<PageDown>` / `<PageUp>` | Next / previous page |
-| `+` / `-` / `0` | Zoom in / out / fit page |
-| `/` | Search |
-| `gO` | Document outline |
-| `i` | Toggle dark mode |
-| `q` | Close the viewer |
+| Key                       | Action                               |
+| ------------------------- | ------------------------------------ |
+| `j` / `k`                 | Scroll, turning the page at the edge |
+| `<PageDown>` / `<PageUp>` | Next / previous page                 |
+| `+` / `-` / `0`           | Zoom in / out / fit page             |
+| `/`                       | Search                               |
+| `gO`                      | Document outline                     |
+| `i`                       | Toggle dark mode                     |
+| `q`                       | Close the viewer                     |
 
 ### Office viewer (`.xlsx`, `.xlsm`, `.docx`)
 
@@ -405,11 +422,11 @@ Opening one of these files shows a read-only Markdown rendering (so `render-mark
 
 ### Help popup
 
-| Command | Action |
-| --- | --- |
+| Command           | Action                                                                    |
+| ----------------- | ------------------------------------------------------------------------- |
 | `:help` (or `:h`) | Open this keymap cheat sheet in a floating window (`lua/config/help.lua`) |
-| `:q` or `q` | Close the popup |
-| `:help {topic}` | Regular Neovim help |
+| `:q` or `q`       | Close the popup                                                           |
+| `:help {topic}`   | Regular Neovim help                                                       |
 
 ### Discovering more
 
@@ -425,10 +442,10 @@ nvim-tree is always open: it opens at startup (also with `nvim <dir>`) and reope
 
 ## Maintenance
 
-| Command | Action |
-| --- | --- |
-| `:Lazy` | Open the plugin manager |
-| `:Lazy restore` | Install the versions pinned in `lazy-lock.json` |
-| `:Lazy update` | Update plugins (then review and commit `lazy-lock.json`) |
-| `:Mason` | Manage language servers |
-| `:checkhealth` | Diagnose the setup |
+| Command         | Action                                                   |
+| --------------- | -------------------------------------------------------- |
+| `:Lazy`         | Open the plugin manager                                  |
+| `:Lazy restore` | Install the versions pinned in `lazy-lock.json`          |
+| `:Lazy update`  | Update plugins (then review and commit `lazy-lock.json`) |
+| `:Mason`        | Manage language servers                                  |
+| `:checkhealth`  | Diagnose the setup                                       |
