@@ -21,20 +21,25 @@ end
 
 -- Closes nvim-tree before the session is saved, then reopens it once the
 -- session is restored, so the tree never ends up in the saved layout.
-local function restart_nvim()
+-- Optional `extra` is a command passed through to `:restart`.
+local function restart_nvim(extra)
+  extra = extra or ''
   local tree = require('nvim-tree.api').tree
-  local was_visible = tree.is_visible()
-  if was_visible then
+  if tree.is_visible() then
     vim.g.nvim_tree_allow_close = true
     tree.close()
+    extra = "lua require('nvim-tree.api').tree.open({ focus = false })"
+      .. (extra ~= '' and ('\n' .. extra) or '')
   end
-
-  if was_visible then
-    vim.cmd("restart lua require('nvim-tree.api').tree.open({ focus = false })")
-  else
-    vim.cmd('restart')
-  end
+  vim.cmd('restart ' .. extra)
 end
+
+-- `:restart` itself is built in and cannot be redefined, so a command-line
+-- abbreviation rewrites a typed `:restart` into `:Restart`.
+vim.api.nvim_create_user_command('Restart', function(opts)
+  restart_nvim(opts.args)
+end, { nargs = '*', desc = 'Restart Neovim, keeping nvim-tree open' })
+vim.cmd([[cnoreabbrev <expr> restart (getcmdtype() == ':' && getcmdline() ==# 'restart') ? 'Restart' : 'restart']])
 
 local function set_file_and_window_keymaps()
   map('n', '<leader>w', '<cmd>w<CR>', 'Save file')
@@ -74,7 +79,7 @@ local function set_diagnostic_and_lsp_management_keymaps()
   map('n', '<leader>li', '<cmd>checkhealth vim.lsp<CR>', 'Show LSP information')
   map('n', '<leader>lr', '<cmd>lsp restart<CR>', 'Restart LSP')
   map('n', '<leader>m', '<cmd>Mason<CR>', 'Open Mason')
-  map('n', '<leader>R', restart_nvim, 'Restart Neovim and restore the session')
+  map('n', '<leader>R', function() restart_nvim() end, 'Restart Neovim and restore the session')
 end
 
 set_file_and_window_keymaps()
