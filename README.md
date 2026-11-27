@@ -394,10 +394,14 @@ Press `g?` inside the explorer for the full list. The most useful keys:
 ### Markdown rendering (render-markdown.nvim)
 
 Active by default in `.md` files. The keymap only exists in Markdown buffers.
+Fenced ```` ```mermaid ```` blocks are syntax-highlighted through the `mermaid` Treesitter parser (syntax only, no diagram rendering).
 
 | Key          | Action                                      |
 | ------------ | ------------------------------------------- |
 | `<leader>mp` | Toggle the rendering for the current buffer |
+| `<leader>mm` | Show the Mermaid diagram under the cursor full screen (`q` closes) |
+
+The diagram is rendered with `mmdc` (`npm i -g @mermaid-js/mermaid-cli`) and drawn as an iTerm2 inline image, scaled to fill the whole terminal (`lua/mermaid.lua`).
 
 ### PDF viewer (pdf-view.nvim)
 

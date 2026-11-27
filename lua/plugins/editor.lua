@@ -8,6 +8,8 @@ local TREESITTER_PARSERS = {
   'vimdoc',
   'markdown',
   'markdown_inline',
+  -- Highlights ```mermaid fenced blocks inside Markdown (injected by name).
+  'mermaid',
 }
 
 local TREESITTER_FILETYPES = {
@@ -129,6 +131,7 @@ return {
     opts = {},
     keys = {
       { '<leader>mp', '<cmd>RenderMarkdown buf_toggle<CR>', ft = 'markdown', desc = 'Toggle Markdown rendering' },
+      { '<leader>mm', function() require('mermaid').preview() end, ft = 'markdown', desc = 'Show the Mermaid diagram under the cursor' },
     },
   },
 }
