@@ -51,21 +51,35 @@ local function term_write(s)
   end
 end
 
+local ZOOM_STEP = 1.5
+local ZOOM_MAX = 40
+
+---Crops `png` to the pixel rectangle and returns the file of the part.
+local function crop(png, x, y, w, h)
+  local out = ('%s/crop-%d-%d-%d-%d-%s'):format(cache_dir, x, y, w, h, vim.fn.fnamemodify(png, ':t'))
+  if not vim.uv.fs_stat(out) then
+    local r = vim.system({ 'sips', '-c', tostring(h), tostring(w), '--cropOffset', tostring(y), tostring(x), png, '--out', out }):wait()
+    if r.code ~= 0 then
+      return png
+    end
+  end
+  return out
+end
+
 local function show(png)
   local f = assert(io.open(png, 'rb'))
-  local data = f:read('*a')
+  local full = f:read('*a')
   f:close()
+  local pw, ph = png_size(full)
 
-  local pw, ph = png_size(data)
-  -- The float covers the whole editor; the diagram is scaled up or down to fill
-  -- it, keeping its aspect ratio (a cell is assumed ~1:2, width:height).
+  -- The float covers the whole editor. The view is a rectangle of the diagram
+  -- (in pixels) scaled to fill it, keeping the aspect ratio (a cell is
+  -- assumed ~1:2, width:height).
   local win_cols = vim.o.columns
   local win_rows = vim.o.lines - vim.o.cmdheight
-  local k = math.min(win_cols / pw, win_rows * 2 / ph)
-  local cols = math.max(1, math.floor(pw * k))
-  local rows = math.max(1, math.floor(ph * k / 2))
-  local row = math.floor((win_rows - rows) / 2)
-  local col = math.floor((win_cols - cols) / 2)
+  local aspect = win_cols / (win_rows * 2)
+  local base_w = math.max(pw, ph * aspect) -- view width that shows everything
+  local zoom, cx, cy = 1, pw / 2, ph / 2
 
   local buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.fn['repeat']({ string.rep(' ', win_cols) }, win_rows))
@@ -74,8 +88,29 @@ local function show(png)
     style = 'minimal', border = 'none', zindex = 250,
   })
 
-  local seq = ('\27]1337;File=inline=1;size=%d;width=%d;height=%d;preserveAspectRatio=0;doNotMoveCursor=1:%s\a')
-    :format(#data, cols, rows, vim.base64.encode(data))
+  local seq, row, col
+  local function build()
+    local vw = base_w / zoom
+    local vh = vw / aspect
+    local w, h = math.min(pw, vw), math.min(ph, vh)
+    cx = math.max(w / 2, math.min(pw - w / 2, cx))
+    cy = math.max(h / 2, math.min(ph - h / 2, cy))
+    w, h = math.floor(w), math.floor(h)
+    local x, y = math.floor(cx - w / 2), math.floor(cy - h / 2)
+    local data = full
+    if w < pw or h < ph then
+      local g = assert(io.open(crop(png, x, y, w, h), 'rb'))
+      data = g:read('*a')
+      g:close()
+    end
+    local k = math.min(win_cols / w, win_rows * 2 / h)
+    local cols, rows = math.max(1, math.floor(w * k)), math.max(1, math.floor(h * k / 2))
+    row, col = math.floor((win_rows - rows) / 2), math.floor((win_cols - cols) / 2)
+    seq = ('\27]1337;File=inline=1;size=%d;width=%d;height=%d;preserveAspectRatio=0;doNotMoveCursor=1:%s\a')
+      :format(#data, cols, rows, vim.base64.encode(data))
+  end
+  build()
+
   -- +1: terminal coordinates are 1-based. Neovim redraws can write
   -- over an inline image, so it is printed again after each redraw of the float.
   local ns = vim.api.nvim_create_namespace('mermaid-image-' .. win)
@@ -94,6 +129,11 @@ local function show(png)
       end
     end,
   })
+  local function refresh()
+    build()
+    vim.cmd('redraw!')
+    vim.defer_fn(draw, 30)
+  end
   vim.cmd('redraw')
   vim.defer_fn(draw, 60)
 
@@ -104,9 +144,35 @@ local function show(png)
     end
     vim.cmd('redraw!')
   end
-  for _, key in ipairs({ 'q', '<Esc>', '<CR>' }) do
-    vim.keymap.set('n', key, close, { buffer = buf, nowait = true })
+  local function map(keys, fn)
+    for _, key in ipairs(type(keys) == 'table' and keys or { keys }) do
+      vim.keymap.set('n', key, fn, { buffer = buf, nowait = true })
+    end
   end
+  local function zoom_by(factor)
+    return function()
+      zoom = math.max(1, math.min(ZOOM_MAX, zoom * factor))
+      refresh()
+    end
+  end
+  local function pan(dx, dy)
+    return function()
+      local vw = base_w / zoom
+      cx, cy = cx + dx * vw, cy + dy * vw / aspect
+      refresh()
+    end
+  end
+  map({ 'q', '<Esc>' }, close)
+  map({ '+', '=', 'z', '<ScrollWheelUp>' }, zoom_by(ZOOM_STEP))
+  map({ '-', 'Z', '<ScrollWheelDown>' }, zoom_by(1 / ZOOM_STEP))
+  map({ '0', '<CR>' }, function()
+    zoom, cx, cy = 1, pw / 2, ph / 2
+    refresh()
+  end)
+  map({ 'h', '<Left>' }, pan(-0.25, 0))
+  map({ 'l', '<Right>' }, pan(0.25, 0))
+  map({ 'k', '<Up>' }, pan(0, -0.25))
+  map({ 'j', '<Down>' }, pan(0, 0.25))
   vim.api.nvim_create_autocmd('BufLeave', { buffer = buf, once = true, callback = close })
 end
 
@@ -121,14 +187,14 @@ function M.preview()
     return
   end
   vim.fn.mkdir(cache_dir, 'p')
-  local name = vim.fn.sha256(src):sub(1, 16)
+  local name = vim.fn.sha256(src):sub(1, 16) .. '-s3'
   local mmd, png = cache_dir .. '/' .. name .. '.mmd', cache_dir .. '/' .. name .. '.png'
   if vim.uv.fs_stat(png) then
     return show(png)
   end
   vim.fn.writefile(vim.split(src, '\n'), mmd)
   vim.notify('Rendering mermaid diagram…')
-  vim.system({ 'mmdc', '-i', mmd, '-o', png, '-b', 'white', '-s', '2', '-q' }, { text = true }, vim.schedule_wrap(function(r)
+  vim.system({ 'mmdc', '-i', mmd, '-o', png, '-b', 'white', '-s', '3', '-q' }, { text = true }, vim.schedule_wrap(function(r)
     if r.code ~= 0 or not vim.uv.fs_stat(png) then
       vim.notify('mmdc failed: ' .. (r.stderr or ''), vim.log.levels.ERROR)
       return

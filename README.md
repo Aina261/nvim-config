@@ -401,7 +401,17 @@ Fenced ```` ```mermaid ```` blocks are syntax-highlighted through the `mermaid` 
 | `<leader>mp` | Toggle the rendering for the current buffer |
 | `<leader>mm` | Show the Mermaid diagram under the cursor full screen (`q` closes) |
 
-The diagram is rendered with `mmdc` (`npm i -g @mermaid-js/mermaid-cli`) and drawn as an iTerm2 inline image, scaled to fill the whole terminal (`lua/mermaid.lua`).
+Inside the diagram view:
+
+| Key                          | Action                    |
+| ---------------------------- | ------------------------- |
+| `+` / `=` / `z` / wheel up   | Zoom in                   |
+| `-` / `Z` / wheel down       | Zoom out                  |
+| `h` `j` `k` `l` / arrows     | Pan                       |
+| `0` / `Enter`                | Reset (fit the terminal)  |
+| `q` / `Esc`                  | Close                     |
+
+The diagram is rendered with `mmdc` (`npm i -g @mermaid-js/mermaid-cli`) and drawn as an iTerm2 inline image, scaled to fill the whole terminal (`lua/mermaid.lua`). Zooming crops the PNG with `sips` (built into macOS).
 
 ### PDF viewer (pdf-view.nvim)
 
