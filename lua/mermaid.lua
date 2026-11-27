@@ -51,35 +51,45 @@ local function term_write(s)
   end
 end
 
-local ZOOM_STEP = 1.5
+local BOX = 0.5 -- the zoom cursor covers this fraction of the view in each direction
 local ZOOM_MAX = 40
+local DEBOUNCE_MS = 25
 
----Crops `png` to the pixel rectangle and returns the file of the part.
-local function crop(png, x, y, w, h)
+---Crop of `png` to a pixel rectangle: starts `sips` and calls `cb(file)` when done (at once if already made).
+local function crop(png, x, y, w, h, cb)
   local out = ('%s/crop-%d-%d-%d-%d-%s'):format(cache_dir, x, y, w, h, vim.fn.fnamemodify(png, ':t'))
-  if not vim.uv.fs_stat(out) then
-    local r = vim.system({ 'sips', '-c', tostring(h), tostring(w), '--cropOffset', tostring(y), tostring(x), png, '--out', out }):wait()
-    if r.code ~= 0 then
-      return png
-    end
+  if vim.uv.fs_stat(out) then
+    return cb(out)
   end
-  return out
+  vim.system(
+    { 'sips', '-c', tostring(h), tostring(w), '--cropOffset', tostring(y), tostring(x), png, '--out', out },
+    {},
+    vim.schedule_wrap(function(r)
+      cb(r.code == 0 and out or png)
+    end)
+  )
+end
+
+local function read_file(path)
+  local f = assert(io.open(path, 'rb'))
+  local d = f:read('*a')
+  f:close()
+  return d
 end
 
 local function show(png)
-  local f = assert(io.open(png, 'rb'))
-  local full = f:read('*a')
-  f:close()
+  local full = read_file(png)
   local pw, ph = png_size(full)
 
   -- The float covers the whole editor. The view is a rectangle of the diagram
   -- (in pixels) scaled to fill it, keeping the aspect ratio (a cell is
-  -- assumed ~1:2, width:height).
+  -- assumed ~1:2, width:height). A box (the "cursor") marks what `+` zooms to.
   local win_cols = vim.o.columns
   local win_rows = vim.o.lines - vim.o.cmdheight
   local aspect = win_cols / (win_rows * 2)
   local base_w = math.max(pw, ph * aspect) -- view width that shows everything
-  local zoom, cx, cy = 1, pw / 2, ph / 2
+  local view_w, cx, cy = base_w, pw / 2, ph / 2
+  local bx, by = 0.5, 0.5 -- box centre, as a fraction of the view
 
   local buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.fn['repeat']({ string.rep(' ', win_cols) }, win_rows))
@@ -88,37 +98,44 @@ local function show(png)
     style = 'minimal', border = 'none', zindex = 250,
   })
 
-  local seq, row, col
-  local function build()
-    local vw = base_w / zoom
-    local vh = vw / aspect
-    local w, h = math.min(pw, vw), math.min(ph, vh)
-    cx = math.max(w / 2, math.min(pw - w / 2, cx))
-    cy = math.max(h / 2, math.min(ph - h / 2, cy))
-    w, h = math.floor(w), math.floor(h)
-    local x, y = math.floor(cx - w / 2), math.floor(cy - h / 2)
-    local data = full
-    if w < pw or h < ph then
-      local g = assert(io.open(crop(png, x, y, w, h), 'rb'))
-      data = g:read('*a')
-      g:close()
-    end
-    local k = math.min(win_cols / w, win_rows * 2 / h)
-    local cols, rows = math.max(1, math.floor(w * k)), math.max(1, math.floor(h * k / 2))
-    row, col = math.floor((win_rows - rows) / 2), math.floor((win_cols - cols) / 2)
-    seq = ('\27]1337;File=inline=1;size=%d;width=%d;height=%d;preserveAspectRatio=0;doNotMoveCursor=1:%s\a')
-      :format(#data, cols, rows, vim.base64.encode(data))
-  end
-  build()
+  local view -- { x, y, w, h } in pixels of what is on screen
+  local img_seq, row, col, cols, rows
+  local gen = 0
 
-  -- +1: terminal coordinates are 1-based. Neovim redraws can write
-  -- over an inline image, so it is printed again after each redraw of the float.
+  local function clamp_box()
+    bx = math.max(BOX / 2, math.min(1 - BOX / 2, bx))
+    by = math.max(BOX / 2, math.min(1 - BOX / 2, by))
+  end
+
+  ---The box, drawn with box characters at absolute terminal positions.
+  local function box_seq()
+    clamp_box()
+    local x0 = col + math.floor((bx - BOX / 2) * cols)
+    local y0 = row + math.floor((by - BOX / 2) * rows)
+    local w = math.max(2, math.floor(BOX * cols))
+    local h = math.max(2, math.floor(BOX * rows))
+    local out = { '\27[1;33m' }
+    local function at(r, c, text)
+      out[#out + 1] = ('\27[%d;%dH%s'):format(y0 + r + 1, x0 + c + 1, text)
+    end
+    at(0, 0, '┏' .. string.rep('━', w - 2) .. '┓')
+    for i = 1, h - 2 do
+      at(i, 0, '┃')
+      at(i, w - 1, '┃')
+    end
+    at(h - 1, 0, '┗' .. string.rep('━', w - 2) .. '┛')
+    out[#out + 1] = '\27[0m'
+    return table.concat(out)
+  end
+
+  -- Neovim redraws can write over an inline image, so everything is printed
+  -- again after each redraw of the float (see the decoration provider).
   local ns = vim.api.nvim_create_namespace('mermaid-image-' .. win)
   local pending = false
   local function draw()
     pending = false
-    if vim.api.nvim_win_is_valid(win) then
-      term_write(('\27[s\27[%d;%dH%s\27[u'):format(row + 1, col + 1, seq))
+    if img_seq and vim.api.nvim_win_is_valid(win) then
+      term_write(('\27[s\27[%d;%dH%s%s\27[u'):format(row + 1, col + 1, img_seq, box_seq()))
     end
   end
   vim.api.nvim_set_decoration_provider(ns, {
@@ -129,15 +146,55 @@ local function show(png)
       end
     end,
   })
-  local function refresh()
-    build()
-    vim.cmd('redraw!')
-    vim.defer_fn(draw, 30)
-  end
-  vim.cmd('redraw')
-  vim.defer_fn(draw, 60)
 
+  ---Recomputes the view; crops (async) when needed, then prints.
+  local function render()
+    gen = gen + 1
+    local my = gen
+    view_w = math.max(base_w / ZOOM_MAX, math.min(base_w, view_w))
+    local w, h = math.min(pw, view_w), math.min(ph, view_w / aspect)
+    cx = math.max(w / 2, math.min(pw - w / 2, cx))
+    cy = math.max(h / 2, math.min(ph - h / 2, cy))
+    w, h = math.floor(w), math.floor(h)
+    local x, y = math.floor(cx - w / 2), math.floor(cy - h / 2)
+    local k = math.min(win_cols / w, win_rows * 2 / h)
+    cols, rows = math.max(1, math.floor(w * k)), math.max(1, math.floor(h * k / 2))
+    row, col = math.floor((win_rows - rows) / 2), math.floor((win_cols - cols) / 2)
+    view = { x = x, y = y, w = w, h = h }
+
+    local function finish(file)
+      if my ~= gen or not vim.api.nvim_win_is_valid(win) then
+        return -- a newer render replaced this one
+      end
+      local data = file == png and full or read_file(file)
+      img_seq = ('\27]1337;File=inline=1;size=%d;width=%d;height=%d;preserveAspectRatio=0;doNotMoveCursor=1:%s\a')
+        :format(#data, cols, rows, vim.base64.encode(data))
+      vim.cmd('redraw!')
+      vim.defer_fn(draw, 30)
+    end
+    if w < pw or h < ph then
+      crop(png, x, y, w, h, finish)
+    else
+      finish(png)
+    end
+  end
+
+  -- Moves from several quick key presses are merged into one render.
+  local timer = assert(vim.uv.new_timer())
+  local function schedule()
+    timer:stop()
+    timer:start(DEBOUNCE_MS, 0, vim.schedule_wrap(render))
+  end
+
+  local closed = false
   local function close()
+    if closed then
+      return
+    end
+    closed = true
+    timer:stop()
+    timer:close()
+    gen = gen + 1
     vim.api.nvim_set_decoration_provider(ns, {})
     if vim.api.nvim_win_is_valid(win) then
       vim.api.nvim_win_close(win, true)
@@ -149,31 +206,50 @@ local function show(png)
       vim.keymap.set('n', key, fn, { buffer = buf, nowait = true })
     end
   end
-  local function zoom_by(factor)
+  local function zoom_in()
+    -- the view becomes what the box covers
+    cx, cy = view.x + bx * view.w, view.y + by * view.h
+    view_w = BOX * view.w
+    bx, by = 0.5, 0.5
+    schedule()
+  end
+  local function zoom_out()
+    cx, cy = view.x + bx * view.w, view.y + by * view.h
+    view_w = view_w / BOX
+    bx, by = 0.5, 0.5
+    schedule()
+  end
+  local function move_box(dx, dy)
     return function()
-      zoom = math.max(1, math.min(ZOOM_MAX, zoom * factor))
-      refresh()
+      bx, by = bx + dx, by + dy
+      schedule()
     end
   end
   local function pan(dx, dy)
     return function()
-      local vw = base_w / zoom
-      cx, cy = cx + dx * vw, cy + dy * vw / aspect
-      refresh()
+      cx, cy = cx + dx * view.w, cy + dy * view.h
+      schedule()
     end
   end
   map({ 'q', '<Esc>' }, close)
-  map({ '+', '=', 'z', '<ScrollWheelUp>' }, zoom_by(ZOOM_STEP))
-  map({ '-', 'Z', '<ScrollWheelDown>' }, zoom_by(1 / ZOOM_STEP))
-  map({ '0', '<CR>' }, function()
-    zoom, cx, cy = 1, pw / 2, ph / 2
-    refresh()
+  map({ '+', '=', '<CR>', '<ScrollWheelUp>' }, zoom_in)
+  map({ '-', '<BS>', '<ScrollWheelDown>' }, zoom_out)
+  map('0', function()
+    view_w, cx, cy, bx, by = base_w, pw / 2, ph / 2, 0.5, 0.5
+    schedule()
   end)
-  map({ 'h', '<Left>' }, pan(-0.25, 0))
-  map({ 'l', '<Right>' }, pan(0.25, 0))
-  map({ 'k', '<Up>' }, pan(0, -0.25))
-  map({ 'j', '<Down>' }, pan(0, 0.25))
+  map({ 'h', '<Left>' }, move_box(-0.1, 0))
+  map({ 'l', '<Right>' }, move_box(0.1, 0))
+  map({ 'k', '<Up>' }, move_box(0, -0.1))
+  map({ 'j', '<Down>' }, move_box(0, 0.1))
+  map({ 'H', '<S-Left>' }, pan(-0.25, 0))
+  map({ 'L', '<S-Right>' }, pan(0.25, 0))
+  map({ 'K', '<S-Up>' }, pan(0, -0.25))
+  map({ 'J', '<S-Down>' }, pan(0, 0.25))
   vim.api.nvim_create_autocmd('BufLeave', { buffer = buf, once = true, callback = close })
+
+  vim.cmd('redraw')
+  render()
 end
 
 function M.preview()

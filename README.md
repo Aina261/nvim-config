@@ -401,15 +401,18 @@ Fenced ```` ```mermaid ```` blocks are syntax-highlighted through the `mermaid` 
 | `<leader>mp` | Toggle the rendering for the current buffer |
 | `<leader>mm` | Show the Mermaid diagram under the cursor full screen (`q` closes) |
 
-Inside the diagram view:
+Inside the diagram view, a yellow box (the zoom cursor) marks what `+` will zoom to:
 
-| Key                          | Action                    |
-| ---------------------------- | ------------------------- |
-| `+` / `=` / `z` / wheel up   | Zoom in                   |
-| `-` / `Z` / wheel down       | Zoom out                  |
-| `h` `j` `k` `l` / arrows     | Pan                       |
-| `0` / `Enter`                | Reset (fit the terminal)  |
-| `q` / `Esc`                  | Close                     |
+| Key                                | Action                                         |
+| ---------------------------------- | ---------------------------------------------- |
+| `h` `j` `k` `l` / arrows           | Move the zoom cursor                           |
+| `+` / `=` / `Enter` / wheel up     | Zoom into the cursor (×2)                      |
+| `-` / `Backspace` / wheel down     | Zoom out (×2), centered on the cursor          |
+| `H` `J` `K` `L` / Shift + arrows   | Pan the diagram                                |
+| `0`                                | Reset (fit the terminal)                       |
+| `q` / `Esc`                        | Close                                          |
+
+Key presses typed in quick succession are merged into a single render, so there is no lag build-up.
 
 The diagram is rendered with `mmdc` (`npm i -g @mermaid-js/mermaid-cli`) and drawn as an iTerm2 inline image, scaled to fill the whole terminal (`lua/mermaid.lua`). Zooming crops the PNG with `sips` (built into macOS).
 
