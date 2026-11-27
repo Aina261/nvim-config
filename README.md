@@ -412,7 +412,7 @@ Inside the diagram view, the terminal cursor is the zoom cursor: it moves instan
 | `0`                                | Reset (fit the terminal)                            |
 | `q` / `Esc`                        | Close                                               |
 
-Each view is cropped and resized to the screen's resolution with `sips` before it is sent to iTerm2, and key presses typed in quick succession are merged into one render, so it stays responsive.
+The diagram's PNG is re-rendered at a smaller scale until it is at most 5 MB. Each view is cropped and resized to the screen's resolution with `sips` before it is sent to iTerm2, and key presses typed in quick succession are merged into one render, and the image is sent to the terminal only when the view changes (not when the cursor moves), so it stays responsive.
 
 The diagram is rendered with `mmdc` (`npm i -g @mermaid-js/mermaid-cli`) and drawn as an iTerm2 inline image, scaled to fill the whole terminal (`lua/mermaid.lua`). Zooming crops the PNG with `sips` (built into macOS).
 

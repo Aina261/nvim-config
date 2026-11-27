@@ -3,6 +3,7 @@
 -- draws it as an iTerm2 inline image (OSC 1337), like pdf-view.nvim does.
 local M = {}
 
+local MAX_BYTES = 5 * 1024 * 1024 -- the diagram's PNG is rendered smaller until it fits
 local cache_dir = vim.fn.stdpath('cache') .. '/mermaid'
 
 ---Source of the mermaid fence around the cursor, or nil.
@@ -54,7 +55,7 @@ end
 local ZOOM_STEP = 2
 local ZOOM_MAX = 40
 local DEBOUNCE_MS = 25
-local CELL_PX = 14 -- pixels per cell, roughly, to size what is sent to the terminal
+local CELL_PX = 10 -- pixels per cell, roughly, to size what is sent to the terminal
 local CURSOR_STEP = { rows = 2, cols = 4 } -- cells moved by one h/j/k/l, so both axes feel alike
 
 local function read_file(path)
@@ -117,29 +118,13 @@ local function show(png)
   local img_seq, row, col, cols, rows
   local gen = 0
 
-  -- Neovim redraws can write over an inline image, so it is printed again
-  -- after each redraw of the float (see the decoration provider).
-  local ns = vim.api.nvim_create_namespace('mermaid-image-' .. win)
-  local pending = false
+  -- The image is printed once per render, after a full redraw. Moving the
+  -- cursor does not repaint the image's cells, so it needs no reprint.
   local function draw()
-    pending = false
     if img_seq and vim.api.nvim_win_is_valid(win) then
       term_write(('\27[s\27[%d;%dH%s\27[u'):format(row + 1, col + 1, img_seq))
     end
   end
-  local function schedule_draw()
-    if not pending then
-      pending = true
-      vim.defer_fn(draw, 30)
-    end
-  end
-  vim.api.nvim_set_decoration_provider(ns, {
-    on_win = function(_, w)
-      if w == win then
-        schedule_draw()
-      end
-    end,
-  })
 
   ---Recomputes the view, makes its image (async), then prints it.
   local function render()
@@ -165,7 +150,8 @@ local function show(png)
       local data = read_file(file)
       img_seq = ('\27]1337;File=inline=1;size=%d;width=%d;height=%d;preserveAspectRatio=0;doNotMoveCursor=1:%s\a')
         :format(#data, cols, rows, vim.base64.encode(data))
-      vim.cmd('redraw!') -- on_win then prints the image
+      vim.cmd('redraw!')
+      vim.defer_fn(draw, 30)
     end)
   end
 
@@ -185,7 +171,6 @@ local function show(png)
     timer:stop()
     timer:close()
     gen = gen + 1
-    vim.api.nvim_set_decoration_provider(ns, {})
     if vim.api.nvim_win_is_valid(win) then
       vim.api.nvim_win_close(win, true)
     end
@@ -267,20 +252,30 @@ function M.preview()
     return
   end
   vim.fn.mkdir(cache_dir, 'p')
-  local name = vim.fn.sha256(src):sub(1, 16) .. '-s3'
+  local name = vim.fn.sha256(src):sub(1, 16) .. '-s2'
   local mmd, png = cache_dir .. '/' .. name .. '.mmd', cache_dir .. '/' .. name .. '.png'
   if vim.uv.fs_stat(png) then
     return show(png)
   end
   vim.fn.writefile(vim.split(src, '\n'), mmd)
   vim.notify('Rendering mermaid diagram…')
-  vim.system({ 'mmdc', '-i', mmd, '-o', png, '-b', 'white', '-s', '3', '-q' }, { text = true }, vim.schedule_wrap(function(r)
-    if r.code ~= 0 or not vim.uv.fs_stat(png) then
-      vim.notify('mmdc failed: ' .. (r.stderr or ''), vim.log.levels.ERROR)
-      return
-    end
-    show(png)
-  end))
+
+  -- Renders at decreasing scales until the PNG is at most MAX_BYTES.
+  local scales = { 2, 1.5, 1, 0.5 }
+  local function render(i)
+    vim.system({ 'mmdc', '-i', mmd, '-o', png, '-b', 'white', '-s', tostring(scales[i]), '-q' }, { text = true }, vim.schedule_wrap(function(r)
+      local stat = vim.uv.fs_stat(png)
+      if r.code ~= 0 or not stat then
+        vim.notify('mmdc failed: ' .. (r.stderr or ''), vim.log.levels.ERROR)
+        return
+      end
+      if stat.size > MAX_BYTES and scales[i + 1] then
+        return render(i + 1)
+      end
+      show(png)
+    end))
+  end
+  render(1)
 end
 
 return M
