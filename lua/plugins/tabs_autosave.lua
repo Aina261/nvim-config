@@ -21,6 +21,11 @@ return {
         mode = 'buffers',
         diagnostics = 'nvim_lsp',
         always_show_bufferline = true,
+        -- Fixed-width tabs: short names are padded up to tab_size, long names
+        -- are truncated so the tab (name + icon + close button) fits in it.
+        tab_size = 22,
+        max_name_length = 14,
+        truncate_names = true,
         close_command = close_buf,
         right_mouse_command = close_buf,
         offsets = {
