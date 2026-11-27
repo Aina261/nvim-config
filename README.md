@@ -394,7 +394,7 @@ Press `g?` inside the explorer for the full list. The most useful keys:
 ### Markdown rendering (render-markdown.nvim)
 
 Active by default in `.md` files. The keymap only exists in Markdown buffers.
-Fenced ```` ```mermaid ```` blocks are syntax-highlighted through the `mermaid` Treesitter parser (syntax only, no diagram rendering).
+Fenced ```` ```mermaid ```` blocks are syntax-highlighted through the `mermaid` Treesitter parser.
 
 | Key          | Action                                      |
 | ------------ | ------------------------------------------- |
